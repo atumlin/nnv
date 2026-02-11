@@ -152,7 +152,7 @@ classdef GNN < handle
 
                 if isa(layer, 'GCNLayer')
                     Y = layer.evaluate(Y, obj.A_norm);
-                elseif isa(layer, 'GINELayer')
+                elseif isa(layer, 'GINELayer') || isa(layer, 'GINEConvLayer')
                     Y = layer.evaluate(Y, E_eval, obj.adj_list, obj.edge_weights);
                 else
                     % Standard layer (ReLU, etc.)
@@ -235,7 +235,7 @@ classdef GNN < handle
 
                 if isa(layer, 'GCNLayer')
                     rs = layer.reach(rs, obj.A_norm, obj.reachMethod, obj.reachOption);
-                elseif isa(layer, 'GINELayer')
+                elseif isa(layer, 'GINELayer') || isa(layer, 'GINEConvLayer')
                     rs = layer.reach(rs, obj.E, obj.adj_list, obj.reachMethod, obj.reachOption, obj.relaxFactor, obj.lp_solver, obj.edge_weights);
                 elseif isa(layer, 'ReluLayer') || isa(layer, 'ActivationFunctionLayer')
                     % Activation layers need Star, not GraphStar
