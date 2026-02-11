@@ -13,6 +13,8 @@ function results = run_gnn_experiments(varargin)
 % Usage:
 %   run_gnn_experiments()              % Run all experiments, generate figures
 %   run_gnn_experiments('no_figures')  % Skip figure generation
+%   run_gnn_experiments('quiet')       % Minimal output, log to file
+%   run_gnn_experiments('quiet', 'no_figures')  % Quiet mode, no figures
 %   results = run_gnn_experiments()    % Return results struct
 %
 % Outputs:
@@ -23,8 +25,14 @@ function results = run_gnn_experiments(varargin)
 
 %% Parse arguments
 generate_figures = true;
-if nargin > 0 && strcmpi(varargin{1}, 'no_figures')
-    generate_figures = false;
+verbose = true;
+
+for i = 1:nargin
+    if strcmpi(varargin{i}, 'no_figures')
+        generate_figures = false;
+    elseif strcmpi(varargin{i}, 'quiet')
+        verbose = false;
+    end
 end
 
 %% Configuration
@@ -34,34 +42,51 @@ perturb_features = [1, 2];  % Power injections only (matches GNNV)
 v_min = 0.95;  % Voltage spec lower bound (p.u.)
 v_max = 1.05;  % Voltage spec upper bound (p.u.)
 
+% Scenario configuration for repeatability experiments
+% Note: GINE model has 1000 samples, GCN has 1500 - use minimum
+num_scenarios = 10;
+scenario_indices = 1:100:1000;  % Evenly spaced: 1, 101, 201, ..., 901
+
 % Paths (self-contained - all files in this folder)
 scriptDir = fileparts(mfilename('fullpath'));
 modelDir = fullfile(scriptDir, 'models');
 resultsDir = fullfile(scriptDir, 'results');
 figuresDir = fullfile(scriptDir, 'figures');
 
+%% Setup logging (quiet mode writes to log file)
+log_file = '';
+if ~verbose
+    log_file = fullfile(resultsDir, sprintf('experiment_log_%s.txt', datestr(now, 'yyyy-mm-dd_HH-MM-SS')));
+    diary(log_file);
+end
+
 %% Initialize results structure
 results = struct();
 results.config = struct('models', {models}, 'epsilons', epsilons, ...
-    'perturb_features', perturb_features, 'v_min', v_min, 'v_max', v_max);
-results.data = cell(length(models), length(epsilons));
+    'perturb_features', perturb_features, 'v_min', v_min, 'v_max', v_max, ...
+    'num_scenarios', num_scenarios, 'scenario_indices', scenario_indices);
+results.data = cell(length(models), length(epsilons), num_scenarios);
 
 %% Print header
-fprintf('\n');
-fprintf('================================================================\n');
-fprintf('        CAV26 GNN Verification Experiments (NNV 3.0)\n');
-fprintf('================================================================\n');
-fprintf('System: IEEE 24-bus Power Flow\n');
-fprintf('Models: %s\n', strjoin(models, ', '));
-fprintf('Node epsilon: %s\n', mat2str(epsilons));
-fprintf('Edge epsilon: 0.001 (fixed, GINE+Edge only)\n');
-fprintf('Voltage spec: [%.2f, %.2f] p.u.\n', v_min, v_max);
-fprintf('================================================================\n\n');
+if verbose
+    fprintf('\n');
+    fprintf('================================================================\n');
+    fprintf('        CAV26 GNN Verification Experiments (NNV 3.0)\n');
+    fprintf('================================================================\n');
+    fprintf('System: IEEE 24-bus Power Flow\n');
+    fprintf('Models: %s\n', strjoin(models, ', '));
+    fprintf('Node epsilon: %s\n', mat2str(epsilons));
+    fprintf('Edge epsilon: 0.001 (fixed, GINE+Edge only)\n');
+    fprintf('Voltage spec: [%.2f, %.2f] p.u.\n', v_min, v_max);
+    fprintf('Scenarios: %d (indices: %s)\n', num_scenarios, mat2str(scenario_indices));
+    fprintf('Total experiments: %d\n', length(models) * length(epsilons) * num_scenarios);
+    fprintf('================================================================\n\n');
+end
 
 total_start = tic;
 
 %% Load models once
-fprintf('Loading models...\n');
+if verbose, fprintf('Loading models...\n'); end
 
 % Load GINE model
 gine_path = fullfile(modelDir, 'gine_ieee24.mat');
@@ -71,53 +96,63 @@ gine_model = load(gine_path);
 gcn_path = fullfile(modelDir, 'gcn_ieee24.mat');
 gcn_model = load(gcn_path);
 
-fprintf('Models loaded successfully.\n\n');
+if verbose, fprintf('Models loaded successfully.\n\n'); end
 
 %% Run experiments
-for m = 1:length(models)
-    model_name = models{m};
+exp_count = 0;
+total_experiments = length(models) * length(epsilons) * num_scenarios;
 
-    for e = 1:length(epsilons)
-        epsilon = epsilons(e);
+for s = 1:num_scenarios
+    scenario_idx = scenario_indices(s);
+    if verbose, fprintf('=== Scenario %d/%d (sample index: %d) ===\n', s, num_scenarios, scenario_idx); end
 
-        % Print experiment header (different format for GINE+Edge)
-        if strcmp(model_name, 'GINE+Edge')
-            fprintf('--- %s, node_eps=%.3f, edge_eps=0.001 ---\n', model_name, epsilon);
-        else
-            fprintf('--- %s, epsilon=%.3f ---\n', model_name, epsilon);
-        end
-        exp_start = tic;
+    for m = 1:length(models)
+        model_name = models{m};
 
-        % Run experiment based on model type
-        switch model_name
-            case 'GCN'
-                exp_result = run_gcn_experiment(gcn_model, epsilon, perturb_features, v_min, v_max);
-            case 'GINE'
-                exp_result = run_gine_experiment(gine_model, epsilon, perturb_features, v_min, v_max);
-            case 'GINE+Edge'
-                exp_result = run_gine_edge_experiment(gine_model, epsilon, perturb_features, v_min, v_max);
-        end
+        for e = 1:length(epsilons)
+            epsilon = epsilons(e);
+            exp_count = exp_count + 1;
 
-        exp_result.time = toc(exp_start);
-        results.data{m, e} = exp_result;
+            % Print experiment header (compact format)
+            if verbose
+                if strcmp(model_name, 'GINE+Edge')
+                    fprintf('[%d/%d] %s, eps=%.3f, edge_eps=0.001: ', exp_count, total_experiments, model_name, epsilon);
+                else
+                    fprintf('[%d/%d] %s, eps=%.3f: ', exp_count, total_experiments, model_name, epsilon);
+                end
+            end
+            exp_start = tic;
 
-        % Print summary with unknown breakdown
-        if exp_result.unknown_boundary > 0 || exp_result.unknown_timeout > 0
-            fprintf('  Verified: %d, Violated: %d, Unknown: %d (boundary: %d, timeout: %d) (%.2fs)\n', ...
-                exp_result.verified, exp_result.violated, exp_result.unknown, ...
-                exp_result.unknown_boundary, exp_result.unknown_timeout, exp_result.time);
-        else
-            fprintf('  Verified: %d, Violated: %d, Unknown: %d (%.2fs)\n', ...
-                exp_result.verified, exp_result.violated, exp_result.unknown, exp_result.time);
+            % Run experiment based on model type
+            switch model_name
+                case 'GCN'
+                    exp_result = run_gcn_experiment(gcn_model, epsilon, perturb_features, v_min, v_max, scenario_idx);
+                case 'GINE'
+                    exp_result = run_gine_experiment(gine_model, epsilon, perturb_features, v_min, v_max, scenario_idx);
+                case 'GINE+Edge'
+                    exp_result = run_gine_edge_experiment(gine_model, epsilon, perturb_features, v_min, v_max, scenario_idx);
+            end
+
+            exp_result.time = toc(exp_start);
+            exp_result.scenario_idx = scenario_idx;
+            results.data{m, e, s} = exp_result;
+
+            % Print compact summary
+            if verbose
+                fprintf('V=%d, X=%d, U=%d (%.2fs)\n', ...
+                    exp_result.verified, exp_result.violated, exp_result.unknown, exp_result.time);
+            end
         end
     end
-    fprintf('\n');
+    if verbose, fprintf('\n'); end
 end
 
 total_time = toc(total_start);
-fprintf('================================================================\n');
-fprintf('Total time: %.2f seconds\n', total_time);
-fprintf('================================================================\n\n');
+if verbose
+    fprintf('================================================================\n');
+    fprintf('Total time: %.2f seconds\n', total_time);
+    fprintf('================================================================\n\n');
+end
 
 %% Save results
 results.total_time = total_time;
@@ -125,46 +160,60 @@ results_file = fullfile(resultsDir, 'gnn_results.mat');
 save(results_file, 'results');
 fprintf('Results saved to: %s\n', results_file);
 
-%% Generate figures
+%% Generate figures and LaTeX table
 if generate_figures
-    fprintf('\nGenerating figures...\n');
+    if verbose, fprintf('\nGenerating dashboard and LaTeX table...\n'); end
 
-    % Original figures (bar chart and line plot)
-    generate_model_comparison_figure(results, figuresDir);
-    generate_epsilon_sensitivity_figure(results, figuresDir);
+    % Generate combined dashboard (topology + sensitivity)
+    generate_cav26_dashboard(results, gine_model, figuresDir, 'layout', 'force');
 
-    % New domain-specific figures (topology, bounds, dashboard)
-    fprintf('Generating domain-specific figures...\n');
-    generate_cav26_figures(results, gine_model, figuresDir, 'layout', 'force');
+    % Generate LaTeX results table (percentages)
+    generate_latex_table(results, figuresDir);
 
-    fprintf('Figures saved to: %s\n', figuresDir);
+    if verbose, fprintf('Outputs saved to: %s\n', figuresDir); end
 end
 
-%% Print summary table
+%% Print summary table with mean ± std across scenarios
 fprintf('\n');
 fprintf('================================================================\n');
-fprintf('                    RESULTS SUMMARY\n');
+fprintf('              RESULTS SUMMARY (mean ± std over %d scenarios)\n', num_scenarios);
 fprintf('================================================================\n');
 fprintf('%-12s | ', 'Model');
 for e = 1:length(epsilons)
-    fprintf('eps=%.3f | ', epsilons(e));
+    fprintf('  eps=%.3f   | ', epsilons(e));
 end
 fprintf('\n');
 fprintf('%-12s-+-', repmat('-', 1, 12));
 for e = 1:length(epsilons)
-    fprintf('---------+-');
+    fprintf('-------------+-');
 end
 fprintf('\n');
 
 for m = 1:length(models)
     fprintf('%-12s | ', models{m});
     for e = 1:length(epsilons)
-        fprintf('  %2d/%2d  | ', results.data{m,e}.verified, ...
-            results.data{m,e}.verified + results.data{m,e}.unknown);
+        % Collect verified counts across all scenarios
+        verified_counts = zeros(1, num_scenarios);
+        for s = 1:num_scenarios
+            verified_counts(s) = results.data{m, e, s}.verified;
+        end
+        mean_v = mean(verified_counts);
+        std_v = std(verified_counts);
+        fprintf('%5.1f ± %4.1f | ', mean_v, std_v);
     end
     fprintf('\n');
 end
 fprintf('================================================================\n');
+
+% Also print total nodes for reference
+fprintf('Note: Total voltage-output nodes per scenario: %d\n', ...
+    results.data{1,1,1}.verified + results.data{1,1,1}.unknown + results.data{1,1,1}.violated);
+
+%% Close logging
+if ~verbose
+    diary off;
+    fprintf('Log saved to: %s\n', log_file);
+end
 
 end
 
@@ -173,7 +222,7 @@ end
 %  EXPERIMENT FUNCTIONS
 %  =========================================================================
 
-function result = run_gcn_experiment(model, epsilon, perturb_features, v_min, v_max)
+function result = run_gcn_experiment(model, epsilon, perturb_features, v_min, v_max, scenario_idx)
 % Run GCN verification experiment
 
     % Extract weights
@@ -182,9 +231,16 @@ function result = run_gcn_experiment(model, epsilon, perturb_features, v_min, v_
     W2 = double(gather(params.mult2.Weights));
     W3 = double(gather(params.mult3.Weights));
 
-    b1 = zeros(size(W1, 2), 1);
-    b2 = zeros(size(W2, 2), 1);
-    b3 = zeros(size(W3, 2), 1);
+    % Extract bias from model (if present), otherwise use zeros
+    if isfield(params.mult1, 'Bias')
+        b1 = double(extractdata(gather(params.mult1.Bias)));
+        b2 = double(extractdata(gather(params.mult2.Bias)));
+        b3 = double(extractdata(gather(params.mult3.Bias)));
+    else
+        b1 = zeros(size(W1, 2), 1);
+        b2 = zeros(size(W2, 2), 1);
+        b3 = zeros(size(W3, 2), 1);
+    end
 
     % Create layers with ReLU activations
     L1 = GCNLayer('gcn1', W1, b1);
@@ -196,7 +252,7 @@ function result = run_gcn_experiment(model, epsilon, perturb_features, v_min, v_
 
     % Graph structure
     A_norm = double(model.ANorm_g);
-    X = double(model.X_test_g{1});
+    X = double(model.X_test_g{scenario_idx});
     numNodes = size(X, 1);
 
     % Create GNN
@@ -215,7 +271,7 @@ function result = run_gcn_experiment(model, epsilon, perturb_features, v_min, v_
     [lb_out, ub_out] = GS_out.getRanges();
 
     % Verify voltage spec
-    verif_results = verify_voltage_spec(GS_out, model, v_min, v_max);
+    verif_results = verify_voltage_spec(GS_out, model, v_min, v_max, scenario_idx);
 
     % Extract voltage-specific bounds for figures
     voltage_idx = 3;  % Voltage magnitude index in output
@@ -244,7 +300,7 @@ function result = run_gcn_experiment(model, epsilon, perturb_features, v_min, v_
 end
 
 
-function result = run_gine_experiment(model, epsilon, perturb_features, v_min, v_max)
+function result = run_gine_experiment(model, epsilon, perturb_features, v_min, v_max, scenario_idx)
 % Run GINE verification experiment (node perturbation only)
 
     % Extract weights
@@ -274,7 +330,7 @@ function result = run_gine_experiment(model, epsilon, perturb_features, v_min, v
     adj_list = [src, dst];
     E = double(model.E_edge);
     edge_weights = double(model.a);
-    X = double(model.X_test_g{1});
+    X = double(model.X_test_g{scenario_idx});
 
     % Create GNN
     gnn = GNN({L1, L2, L3}, [], adj_list, E, edge_weights);
@@ -292,7 +348,7 @@ function result = run_gine_experiment(model, epsilon, perturb_features, v_min, v
     [lb_out, ub_out] = GS_out.getRanges();
 
     % Verify voltage spec
-    verif_results = verify_voltage_spec(GS_out, model, v_min, v_max);
+    verif_results = verify_voltage_spec(GS_out, model, v_min, v_max, scenario_idx);
 
     % Extract voltage-specific bounds for figures
     voltage_idx = 3;  % Voltage magnitude index in output
@@ -321,7 +377,7 @@ function result = run_gine_experiment(model, epsilon, perturb_features, v_min, v
 end
 
 
-function result = run_gine_edge_experiment(model, epsilon, perturb_features, v_min, v_max)
+function result = run_gine_edge_experiment(model, epsilon, perturb_features, v_min, v_max, scenario_idx)
 % Run GINE verification experiment (node + edge perturbation)
 
     % Extract weights
@@ -351,7 +407,7 @@ function result = run_gine_edge_experiment(model, epsilon, perturb_features, v_m
     adj_list = [src, dst];
     E = double(model.E_edge);
     edge_weights = double(model.a);
-    X = double(model.X_test_g{1});
+    X = double(model.X_test_g{scenario_idx});
     numEdges = size(adj_list, 1);
 
     % Create node perturbation
@@ -382,7 +438,7 @@ function result = run_gine_edge_experiment(model, epsilon, perturb_features, v_m
     [lb_out, ub_out] = GS_out.getRanges();
 
     % Verify voltage spec
-    verif_results = verify_voltage_spec(GS_out, model, v_min, v_max);
+    verif_results = verify_voltage_spec(GS_out, model, v_min, v_max, scenario_idx);
 
     % Extract voltage-specific bounds for figures
     voltage_idx = 3;  % Voltage magnitude index in output
@@ -433,136 +489,10 @@ end
 
 
 %% =========================================================================
-%  FIGURE SAVE HELPER
-%  =========================================================================
-
-function save_figure(fig, filepath_base)
-% Save figure to PDF and PNG without page size warnings
-
-    % Save PNG
-    saveas(fig, [filepath_base, '.png']);
-
-    % For PDF, set paper size to match figure
-    fig.Units = 'inches';
-    fig_pos = fig.Position;
-    fig.PaperUnits = 'inches';
-    fig.PaperSize = [fig_pos(3), fig_pos(4)];
-    fig.PaperPosition = [0, 0, fig_pos(3), fig_pos(4)];
-
-    % Save PDF
-    print(fig, [filepath_base, '.pdf'], '-dpdf', '-vector');
-end
-
-
-%% =========================================================================
-%  FIGURE GENERATION
-%  =========================================================================
-
-function generate_model_comparison_figure(results, figuresDir)
-% Generate grouped bar chart comparing models at epsilon=0.01
-
-    models = results.config.models;
-    epsilons = results.config.epsilons;
-
-    % Use epsilon=0.01 (index 3)
-    eps_idx = find(epsilons == 0.01, 1);
-    if isempty(eps_idx)
-        eps_idx = length(epsilons);
-    end
-
-    % Extract data
-    verified = zeros(1, length(models));
-    violated = zeros(1, length(models));
-    unknown = zeros(1, length(models));
-
-    for m = 1:length(models)
-        verified(m) = results.data{m, eps_idx}.verified;
-        violated(m) = results.data{m, eps_idx}.violated;
-        unknown(m) = results.data{m, eps_idx}.unknown;
-    end
-
-    % Create figure
-    fig = figure('Position', [100, 100, 600, 400], 'Visible', 'off');
-
-    % Stacked bar chart (same style as dashboard)
-    bar_data = [verified; unknown; violated]';
-    b = bar(bar_data, 'stacked');
-
-    % Colors (matching dashboard)
-    b(1).FaceColor = [0.2, 0.65, 0.3];   % Green for verified
-    b(2).FaceColor = [0.95, 0.6, 0.1];   % Orange for unknown
-    b(3).FaceColor = [0.8, 0.15, 0.15];  % Red for violated
-
-    % Labels
-    set(gca, 'XTickLabel', models);
-    xlabel('Model', 'FontSize', 12);
-    ylabel('Number of Nodes', 'FontSize', 12);
-    title(sprintf('Voltage Specification Verification (\\epsilon=%.3f)', epsilons(eps_idx)), 'FontSize', 14);
-    legend({'Verified', 'Unknown', 'Violated'}, 'Location', 'northeast');
-
-    % Grid
-    grid on;
-    set(gca, 'GridLineStyle', '--', 'GridAlpha', 0.3);
-
-    % Save
-    save_figure(fig, fullfile(figuresDir, 'gnn_model_comparison'));
-    close(fig);
-end
-
-
-function generate_epsilon_sensitivity_figure(results, figuresDir)
-% Generate line plot showing verification vs epsilon
-
-    models = results.config.models;
-    epsilons = results.config.epsilons;
-
-    % Extract verified counts
-    verified_data = zeros(length(models), length(epsilons));
-    for m = 1:length(models)
-        for e = 1:length(epsilons)
-            verified_data(m, e) = results.data{m, e}.verified;
-        end
-    end
-
-    % Create figure
-    fig = figure('Position', [100, 100, 600, 400], 'Visible', 'off');
-
-    colors = lines(length(models));
-    markers = {'o-', 's-', 'd-'};
-
-    hold on;
-    for m = 1:length(models)
-        plot(epsilons, verified_data(m, :), markers{m}, ...
-            'Color', colors(m, :), 'LineWidth', 2, 'MarkerSize', 8, ...
-            'MarkerFaceColor', colors(m, :));
-    end
-    hold off;
-
-    % Labels
-    xlabel('Perturbation Magnitude (\epsilon)', 'FontSize', 12);
-    ylabel('Verified Safe Nodes', 'FontSize', 12);
-    title('Verification Sensitivity to Input Perturbation', 'FontSize', 14);
-    legend(models, 'Location', 'southwest');
-
-    % Axis settings
-    xlim([0, max(epsilons) * 1.1]);
-    ylim([0, 15]);
-
-    % Grid
-    grid on;
-    set(gca, 'GridLineStyle', '--', 'GridAlpha', 0.3);
-
-    % Save
-    save_figure(fig, fullfile(figuresDir, 'gnn_epsilon_sensitivity'));
-    close(fig);
-end
-
-
-%% =========================================================================
 %  VERIFICATION FUNCTION (embedded for self-containment)
 %  =========================================================================
 
-function results = verify_voltage_spec(GS_out, model_data, v_min, v_max)
+function results = verify_voltage_spec(GS_out, model_data, v_min, v_max, scenario_idx)
 % verify_voltage_spec - Verify voltage magnitude bounds on GNN output
 %
 % Uses LP-based verification (verify_specification) for precise results,
@@ -578,7 +508,7 @@ function results = verify_voltage_spec(GS_out, model_data, v_min, v_max)
                  model_data.global_std_labels(voltage_idx);
 
     % Identify voltage-output nodes (bus_type == 1)
-    X_physical = model_data.X_test_g{1} .* model_data.global_std + model_data.global_mean;
+    X_physical = model_data.X_test_g{scenario_idx} .* model_data.global_std + model_data.global_mean;
     voltage_mask = (X_physical(:, bus_type_idx) == 1);
 
     numNodes = size(GS_out.V, 1);
