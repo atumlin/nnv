@@ -1,6 +1,6 @@
 classdef GNN < handle
     % GNN class encodes Graph Neural Networks for verification in NNV
-    %   This class wraps GNN layers (GCNLayer, GINELayer) and manages
+    %   This class wraps GNN layers (GCNLayer, SAGEConvLayer, GINELayer) and manages
     %   graph structure separately from layer weights, enabling weight
     %   reuse across different graphs.
     %
@@ -152,10 +152,12 @@ classdef GNN < handle
 
                 if isa(layer, 'GCNLayer')
                     Y = layer.evaluate(Y, obj.A_norm);
+                elseif isa(layer, 'SAGEConvLayer')
+                    Y = layer.evaluate(Y, obj.A_norm);
                 elseif isa(layer, 'GINELayer') || isa(layer, 'GINEConvLayer')
                     Y = layer.evaluate(Y, E_eval, obj.adj_list, obj.edge_weights);
                 else
-                    % Standard layer (ReLU, etc.)
+                    % Standard layer (ReLU, AddPoolLayer, etc.)
                     Y = layer.evaluate(Y);
                 end
             end
@@ -235,8 +237,24 @@ classdef GNN < handle
 
                 if isa(layer, 'GCNLayer')
                     rs = layer.reach(rs, obj.A_norm, obj.reachMethod, obj.reachOption);
+                elseif isa(layer, 'SAGEConvLayer')
+                    rs = layer.reach(rs, obj.A_norm, obj.reachMethod, obj.reachOption);
                 elseif isa(layer, 'GINELayer') || isa(layer, 'GINEConvLayer')
                     rs = layer.reach(rs, obj.E, obj.adj_list, obj.reachMethod, obj.reachOption, obj.relaxFactor, obj.lp_solver, obj.edge_weights);
+                elseif isa(layer, 'AddPoolLayer')
+                    rs = layer.reach(rs);
+                elseif isa(layer, 'FullyConnectedLayer')
+                    % Dense layer after pooling: convert GraphStar -> Star -> GraphStar
+                    numNodes = rs.numNodes;
+                    S = rs.toStar();
+                    S_out = layer.reach(S, obj.reachMethod, obj.reachOption, ...
+                                       obj.relaxFactor, obj.dis_opt, obj.lp_solver);
+                    if iscell(S_out)
+                        S_out = S_out{1};
+                    end
+                    n_out = layer.OutputSize;
+                    new_V = reshape(S_out.V, [numNodes, n_out, S_out.nVar + 1]);
+                    rs = GraphStar(new_V, S_out.C, S_out.d, S_out.predicate_lb, S_out.predicate_ub);
                 elseif isa(layer, 'ReluLayer') || isa(layer, 'ActivationFunctionLayer')
                     % Activation layers need Star, not GraphStar
                     % Convert GraphStar to Star, apply activation, convert back
