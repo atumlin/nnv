@@ -260,6 +260,12 @@ function gnn = build_gine_conv(model)
     num_layers = count_indexed_fields(params, 'conv');
     fprintf('gnn2nnv: Building full GINE with %d conv layers\n', num_layers);
 
+    % Determine if inter-layer ReLU activations are used
+    has_relu = true;
+    if isfield(model, 'activations')
+        has_relu = ~strcmp(model.activations, 'none');
+    end
+
     layers = {};
     for i = 1:num_layers
         conv_field = sprintf('conv%d', i);
@@ -287,6 +293,11 @@ function gnn = build_gine_conv(model)
         layers{end+1} = GINEConvLayer(name, W1, b1, W2, b2, W_edge, b_edge, eps_val); %#ok<AGROW>
         fprintf('  Layer %d: GINEConvLayer F_in=%d, hidden=%d, F_out=%d, E_in=%d, eps=%.4f\n', ...
             i, size(W1, 1), size(W1, 2), size(W2, 2), size(W_edge, 1), eps_val);
+
+        % Add inter-layer ReLU (matches Python: F.relu between conv layers)
+        if has_relu && i < num_layers
+            layers{end+1} = ReluLayer(); %#ok<AGROW>
+        end
     end
 
     gnn = GNN(layers, [], adj_list, E, edge_weights);
