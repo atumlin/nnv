@@ -1,0 +1,152 @@
+
+================================================================
+   Full PF + OPF Verification Experiments
+================================================================
+Tasks: pf
+Architectures: GINE Linear
+Edge perturbation archs: gine_linear, gine_conv
+Grids: ieee24, ieee39, ieee118
+Node epsilon values: [0.001 0.005 0.01]
+Edge epsilon: 0.001 (fixed)
+Test graphs: 100
+Perturbed node features: [1 2] (power injections)
+Perturbed edge features: 1 (impedance)
+Voltage spec: per-grid (ieee24:[0.95,1.05], ieee39:[0.94,1.06], ieee118:[0.94,1.09])
+Perturbation modes: node_edge
+Results: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260316-180137
+================================================================
+
+
+########################################################
+  PF — node edge
+  (edge eps=0.001 fixed, archs: GINE Linear)
+########################################################
+
+=== PF IEEE24 [node_edge] (v=[0.95,1.05]) ===
+
+Loading GINE Linear from gine_linear_pf_ieee24.mat...
+gnn2nnv: Detected model type: gine_linear
+gnn2nnv: Building simplified GINE with 3 layers
+  Layer 1: GINELayer node 4->32, edge 2->32
+  Layer 2: GINELayer node 32->32, edge 2->32
+  Layer 3: GINELayer node 32->4, edge 2->4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)
+In run_edge_experiments (line 56)] 
+gnn2nnv: Import complete. GNN has 3 layers.
+  Edge perturbation: eps=0.001, features=1
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- PF IEEE24 GINE Linear, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=674/1300 (51.8%), unknown=215, violated=411, avg_time=2.426s
+
+--- PF IEEE24 GINE Linear, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=658/1300 (50.6%), unknown=394, violated=248, avg_time=7.359s
+
+--- PF IEEE24 GINE Linear, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=552/1300 (42.5%), unknown=570, violated=178, avg_time=13.532s
+
+=== PF IEEE39 [node_edge] (v=[0.94,1.06]) ===
+
+Loading GINE Linear from gine_linear_pf_ieee39.mat...
+gnn2nnv: Detected model type: gine_linear
+gnn2nnv: Building simplified GINE with 3 layers
+  Layer 1: GINELayer node 4->32, edge 2->32
+  Layer 2: GINELayer node 32->32, edge 2->32
+  Layer 3: GINELayer node 32->4, edge 2->4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)
+In run_edge_experiments (line 56)] 
+gnn2nnv: Import complete. GNN has 3 layers.
+  Edge perturbation: eps=0.001, features=1
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- PF IEEE39 GINE Linear, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=2835/2900 (97.8%), unknown=60, violated=5, avg_time=8.018s
+
+--- PF IEEE39 GINE Linear, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=2476/2900 (85.4%), unknown=424, violated=0, avg_time=30.527s
+
+--- PF IEEE39 GINE Linear, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=2290/2900 (79.0%), unknown=610, violated=0, avg_time=52.566s
+
+=== PF IEEE118 [node_edge] (v=[0.94,1.09]) ===
+
+Loading GINE Linear from gine_linear_pf_ieee118.mat...
+gnn2nnv: Detected model type: gine_linear
+gnn2nnv: Building simplified GINE with 3 layers
+  Layer 1: GINELayer node 4->32, edge 2->32
+  Layer 2: GINELayer node 32->32, edge 2->32
+  Layer 3: GINELayer node 32->4, edge 2->4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)
+In run_edge_experiments (line 56)] 
+gnn2nnv: Import complete. GNN has 3 layers.
+  Edge perturbation: eps=0.001, features=1
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- PF IEEE118 GINE Linear, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=6351/6400 (99.2%), unknown=35, violated=14, avg_time=12.226s
+
+--- PF IEEE118 GINE Linear, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=6301/6400 (98.5%), unknown=99, violated=0, avg_time=49.185s
+
+--- PF IEEE118 GINE Linear, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=6265/6400 (97.9%), unknown=135, violated=0, avg_time=89.900s
+
+Intermediate save: 58.3 minutes elapsed
+
+================================================================
+  GRAND SUMMARY (GT-filtered: only safe operating conditions)
+================================================================
+
+--- PF / node edge ---
+  (edge eps=0.001 fixed)
+
+  IEEE24: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.001 | eps=0.005 | eps=0.010 |
+  ------------------------------------------------
+  GINE Linear    |   2.426s |   7.359s |  13.532s |
+
+  Verified       |   eps=0.001   |   eps=0.005   |   eps=0.010   |
+  ------------------------------------------------------------
+  GINE Linear    |  674/1300   52% |  658/1300   51% |  552/1300   42% |
+
+  IEEE39: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.001 | eps=0.005 | eps=0.010 |
+  ------------------------------------------------
+  GINE Linear    |   8.018s |  30.527s |  52.566s |
+
+  Verified       |   eps=0.001   |   eps=0.005   |   eps=0.010   |
+  ------------------------------------------------------------
+  GINE Linear    | 2835/2900   98% | 2476/2900   85% | 2290/2900   79% |
+
+  IEEE118: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.001 | eps=0.005 | eps=0.010 |
+  ------------------------------------------------
+  GINE Linear    |  12.226s |  49.185s |  89.900s |
+
+  Verified       |   eps=0.001   |   eps=0.005   |   eps=0.010   |
+  ------------------------------------------------------------
+  GINE Linear    | 6351/6400   99% | 6301/6400   98% | 6265/6400   98% |
+
+================================================================
+
+Total time: 3497.2 seconds (58.3 minutes)
+Saved: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260316-180137/all_results.csv
+Results saved to: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260316-180137

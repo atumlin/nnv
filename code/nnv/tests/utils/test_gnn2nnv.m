@@ -196,6 +196,66 @@ Y9 = gnn9.evaluate(Xi9);
 assert(max(abs(Y9(:) - py_pred(:))) < 1e-10, ...
     'Imported GNN should match python predictions exactly');
 
+%% 10) SAGEConv import test
+rng(42);
+bp10 = struct();
+bp10.sage1.NodeWeights = rand(F_in, F_h);
+bp10.sage1.EdgeWeights = rand(F_in, F_h);
+bp10.sage1.Bias = rand(F_h, 1);
+bp10.sage2.NodeWeights = rand(F_h, F_out);
+bp10.sage2.EdgeWeights = rand(F_h, F_out);
+bp10.sage2.Bias = rand(F_out, 1);
+
+A_adj = double(A | A');
+A_adj(1:N+1:end) = 0;  % No self-loops
+Xt10 = {rand(N, F_in)};
+Yt10 = {rand(N, F_out)};
+
+p10 = fullfile(tmp_dir, 'test_sage.mat');
+save_gnn_mat(p10, struct('best_params', bp10, 'A_adj', A_adj, ...
+    'X_test_g', {Xt10}, 'Y_test_g', {Yt10}, 'model_type', 'sage'));
+
+[gnn10, td10] = gnn2nnv(p10);
+assert(isa(gnn10, 'GNN'), 'Should return GNN object');
+assert(gnn10.numLayers == 4, 'SAGEConv with 2 conv + 2 ReLU = 4 layers');
+assert(~isempty(gnn10.A_norm), 'Should have adjacency matrix in A_norm');
+
+Y10 = gnn10.evaluate(td10.X);
+assert(size(Y10, 1) == N, 'Output should have N nodes');
+assert(size(Y10, 2) == F_out, 'Output should have F_out features');
+
+% Verify test_data extraction
+assert(isfield(td10, 'A_adj'), 'test_data should have A_adj field');
+assert(isequal(size(td10.A_adj), [N, N]), 'A_adj should be NxN');
+
+%% 11) SAGEConv cross-validation against manual GNN
+rng(42);
+bp11 = struct();
+W_node1 = rand(F_in, F_h); W_edge1 = rand(F_in, F_h); b1 = rand(F_h, 1);
+W_node2 = rand(F_h, F_out); W_edge2 = rand(F_h, F_out); b2 = rand(F_out, 1);
+bp11.sage1.NodeWeights = W_node1; bp11.sage1.EdgeWeights = W_edge1; bp11.sage1.Bias = b1;
+bp11.sage2.NodeWeights = W_node2; bp11.sage2.EdgeWeights = W_edge2; bp11.sage2.Bias = b2;
+
+A_adj11 = double(A | A'); A_adj11(1:N+1:end) = 0;
+Xi11 = rand(N, F_in);
+Xt11 = {Xi11}; Yt11 = {rand(N, F_out)};
+
+% Build manually
+manual_layers = {SAGEConvLayer('s1', W_node1, W_edge1, b1), ReluLayer(), ...
+                 SAGEConvLayer('s2', W_node2, W_edge2, b2), ReluLayer()};
+manual_gnn = GNN(manual_layers, A_adj11);
+manual_pred = manual_gnn.evaluate(Xi11);
+
+p11 = fullfile(tmp_dir, 'test_sage_xval.mat');
+save_gnn_mat(p11, struct('best_params', bp11, 'A_adj', A_adj11, ...
+    'X_test_g', {Xt11}, 'Y_test_g', {Yt11}, 'model_type', 'sage', ...
+    'python_predictions', manual_pred));
+
+[gnn11, ~] = gnn2nnv(p11);
+Y11 = gnn11.evaluate(Xi11);
+assert(max(abs(Y11(:) - manual_pred(:))) < 1e-10, ...
+    'Imported SAGEConv should match manual GNN predictions exactly');
+
 %% Cleanup
 if exist(tmp_dir, 'dir')
     rmdir(tmp_dir, 's');

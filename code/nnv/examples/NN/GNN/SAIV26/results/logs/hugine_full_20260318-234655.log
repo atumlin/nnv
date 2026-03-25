@@ -1,0 +1,924 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2024 The MathWorks, Inc.
+             R2024a Update 4 (24.1.0.2628055) 64-bit (glnxa64)
+                                May 29, 2024
+
+[Warning: Directory permission denied:
+/root/Documents/MATLAB/SupportPackages/R2024a/toolbox/nnet/supportpackages/onnx] 
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+
+================================================================
+   HuGINE (Hu et al.) Full Verification Experiments
+================================================================
+Architecture: GINE Pretrain
+Tasks: pf, opf
+Grids: ieee24, ieee39, ieee118
+Node epsilon values: [1e-05 0.0001 0.001 0.01]
+Edge epsilon values: [0.001 0.01]
+Test graphs: 100
+Perturbed node features: [1 2] (P, Q)
+Perturbed edge features: 1 (impedance)
+Voltage spec: per-grid (ieee24:[0.95,1.05], ieee39:[0.94,1.06], ieee118:[0.94,1.09])
+Perturbation modes: node_only, node_edge
+IEEE118: subgraph verification | IEEE24/39: full-graph verification
+Method: approx-star (all grids)
+Results: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/hugine_260318-234658
+================================================================
+
+
+########################################################
+  PF - node only
+########################################################
+
+=== PF IEEE24 [node_only] (v=[0.95,1.05], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_pf_ieee24.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- PF IEEE24 GINE Pretrain, eps=1e-05 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.211s, verified=13, unknown=0, violated=0
+  [20/100] (graph 20) time=0.216s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=0.224s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.246s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.204s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.206s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.201s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.200s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.204s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=0.201s, verified=13, unknown=0, violated=0
+  Summary: verified=1291/1300 (99.3%), unknown=0, violated=9, avg_time=0.222s
+
+--- PF IEEE24 GINE Pretrain, eps=1e-04 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.213s, verified=13, unknown=0, violated=0
+  [20/100] (graph 20) time=0.303s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=0.235s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.386s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.212s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.266s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.211s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.241s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.223s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=0.203s, verified=13, unknown=0, violated=0
+  Summary: verified=1291/1300 (99.3%), unknown=0, violated=9, avg_time=0.241s
+
+--- PF IEEE24 GINE Pretrain, eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.865s, verified=12, unknown=1, violated=0
+  [20/100] (graph 20) time=0.605s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=0.779s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.720s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.537s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.784s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.569s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.629s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.488s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=0.850s, verified=13, unknown=0, violated=0
+  Summary: verified=1289/1300 (99.2%), unknown=3, violated=8, avg_time=0.655s
+
+--- PF IEEE24 GINE Pretrain, eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=5.981s, verified=10, unknown=3, violated=0
+  [20/100] (graph 20) time=5.106s, verified=12, unknown=1, violated=0
+  [30/100] (graph 30) time=4.584s, verified=11, unknown=2, violated=0
+  [40/100] (graph 40) time=4.760s, verified=10, unknown=3, violated=0
+  [50/100] (graph 50) time=5.114s, verified=10, unknown=3, violated=0
+  [60/100] (graph 60) time=4.562s, verified=11, unknown=2, violated=0
+  [70/100] (graph 70) time=5.074s, verified=10, unknown=3, violated=0
+  [80/100] (graph 80) time=5.034s, verified=12, unknown=1, violated=0
+  [90/100] (graph 90) time=5.615s, verified=12, unknown=1, violated=0
+  [100/100] (graph 100) time=4.473s, verified=11, unknown=2, violated=0
+  Summary: verified=1075/1300 (82.7%), unknown=225, violated=0, avg_time=5.111s
+
+=== PF IEEE39 [node_only] (v=[0.94,1.06], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_pf_ieee39.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- PF IEEE39 GINE Pretrain, eps=1e-05 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.403s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=0.529s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=0.484s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=0.501s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=0.433s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=0.404s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=0.434s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=0.421s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=0.403s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=0.401s, verified=26, unknown=0, violated=3
+  Summary: verified=2605/2900 (89.8%), unknown=0, violated=295, avg_time=0.431s
+
+--- PF IEEE39 GINE Pretrain, eps=1e-04 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.654s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=0.689s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=0.590s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=0.819s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=0.687s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=0.511s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=0.686s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=0.627s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=0.505s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=0.463s, verified=26, unknown=0, violated=3
+  Summary: verified=2605/2900 (89.8%), unknown=0, violated=295, avg_time=0.629s
+
+--- PF IEEE39 GINE Pretrain, eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=2.491s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=2.406s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=2.375s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=2.563s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=2.842s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=2.127s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=3.011s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=2.257s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=2.123s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=2.118s, verified=26, unknown=0, violated=3
+  Summary: verified=2600/2900 (89.7%), unknown=9, violated=291, avg_time=2.446s
+
+--- PF IEEE39 GINE Pretrain, eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=19.199s, verified=20, unknown=9, violated=0
+  [20/100] (graph 20) time=17.824s, verified=23, unknown=6, violated=0
+  [30/100] (graph 30) time=18.323s, verified=20, unknown=9, violated=0
+  [40/100] (graph 40) time=17.629s, verified=22, unknown=7, violated=0
+  [50/100] (graph 50) time=19.647s, verified=20, unknown=9, violated=0
+  [60/100] (graph 60) time=19.161s, verified=20, unknown=9, violated=0
+  [70/100] (graph 70) time=19.265s, verified=20, unknown=9, violated=0
+  [80/100] (graph 80) time=18.585s, verified=20, unknown=9, violated=0
+  [90/100] (graph 90) time=18.252s, verified=21, unknown=8, violated=0
+  [100/100] (graph 100) time=18.214s, verified=20, unknown=9, violated=0
+  Summary: verified=2080/2900 (71.7%), unknown=806, violated=14, avg_time=18.501s
+
+=== PF IEEE118 [node_only] (v=[0.94,1.09], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_pf_ieee118.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- PF IEEE118 GINE Pretrain, eps=1e-05 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.313s, verified=58, unknown=0, violated=6
+  [20/100] (graph 20) time=1.283s, verified=56, unknown=0, violated=8
+  [30/100] (graph 30) time=1.306s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=1.285s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=1.284s, verified=60, unknown=0, violated=4
+  [60/100] (graph 60) time=1.390s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=1.307s, verified=60, unknown=0, violated=4
+  [80/100] (graph 80) time=1.325s, verified=60, unknown=0, violated=4
+  [90/100] (graph 90) time=1.296s, verified=60, unknown=0, violated=4
+  [100/100] (graph 100) time=1.300s, verified=60, unknown=0, violated=4
+  Summary: verified=5884/6400 (91.9%), unknown=0, violated=516, avg_time=1.305s
+
+--- PF IEEE118 GINE Pretrain, eps=1e-04 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.478s, verified=58, unknown=0, violated=6
+  [20/100] (graph 20) time=1.464s, verified=56, unknown=0, violated=8
+  [30/100] (graph 30) time=1.465s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=1.423s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=1.395s, verified=60, unknown=0, violated=4
+  [60/100] (graph 60) time=1.642s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=1.537s, verified=60, unknown=0, violated=4
+  [80/100] (graph 80) time=1.561s, verified=60, unknown=0, violated=4
+  [90/100] (graph 90) time=1.442s, verified=60, unknown=0, violated=4
+  [100/100] (graph 100) time=1.476s, verified=60, unknown=0, violated=4
+  Summary: verified=5883/6400 (91.9%), unknown=5, violated=512, avg_time=1.466s
+
+--- PF IEEE118 GINE Pretrain, eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=2.864s, verified=57, unknown=1, violated=6
+  [20/100] (graph 20) time=2.684s, verified=55, unknown=1, violated=8
+  [30/100] (graph 30) time=2.543s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=2.550s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=2.544s, verified=60, unknown=1, violated=3
+  [60/100] (graph 60) time=2.740s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=2.671s, verified=60, unknown=1, violated=3
+  [80/100] (graph 80) time=2.643s, verified=60, unknown=1, violated=3
+  [90/100] (graph 90) time=2.817s, verified=60, unknown=1, violated=3
+  [100/100] (graph 100) time=2.985s, verified=60, unknown=1, violated=3
+  Summary: verified=5858/6400 (91.5%), unknown=91, violated=451, avg_time=2.777s
+
+--- PF IEEE118 GINE Pretrain, eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=16.922s, verified=44, unknown=19, violated=1
+  [20/100] (graph 20) time=16.240s, verified=44, unknown=19, violated=1
+  [30/100] (graph 30) time=16.808s, verified=48, unknown=15, violated=1
+  [40/100] (graph 40) time=16.856s, verified=48, unknown=15, violated=1
+  [50/100] (graph 50) time=16.662s, verified=52, unknown=11, violated=1
+  [60/100] (graph 60) time=16.996s, verified=48, unknown=14, violated=2
+  [70/100] (graph 70) time=16.800s, verified=52, unknown=11, violated=1
+  [80/100] (graph 80) time=16.893s, verified=52, unknown=11, violated=1
+  [90/100] (graph 90) time=16.825s, verified=52, unknown=11, violated=1
+  [100/100] (graph 100) time=16.864s, verified=53, unknown=10, violated=1
+  Summary: verified=4912/6400 (76.8%), unknown=1365, violated=123, avg_time=16.917s
+
+Intermediate save: 84.5 minutes elapsed
+
+########################################################
+  PF - node edge
+########################################################
+
+=== PF IEEE24 [node_edge] (v=[0.95,1.05], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_pf_ieee24.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+  Edge perturbation: eps_edge=1e-03, features=1
+
+--- PF IEEE24 GINE Pretrain, eps=1e-05, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.507s, verified=13, unknown=0, violated=0
+  [20/100] (graph 20) time=0.507s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=0.516s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.519s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.492s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.493s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.491s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.494s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.490s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=0.494s, verified=13, unknown=0, violated=0
+  Summary: verified=1291/1300 (99.3%), unknown=0, violated=9, avg_time=0.501s [edge_eps=1e-03]
+
+--- PF IEEE24 GINE Pretrain, eps=1e-04, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.505s, verified=13, unknown=0, violated=0
+  [20/100] (graph 20) time=0.607s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=0.577s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.696s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.502s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.563s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.504s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.536s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.504s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=0.493s, verified=13, unknown=0, violated=0
+  Summary: verified=1291/1300 (99.3%), unknown=0, violated=9, avg_time=0.536s [edge_eps=1e-03]
+
+--- PF IEEE24 GINE Pretrain, eps=1e-03, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.232s, verified=12, unknown=1, violated=0
+  [20/100] (graph 20) time=0.954s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=1.130s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=1.068s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.858s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=1.140s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.914s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.967s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.820s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=1.192s, verified=13, unknown=0, violated=0
+  Summary: verified=1289/1300 (99.2%), unknown=3, violated=8, avg_time=0.996s [edge_eps=1e-03]
+
+--- PF IEEE24 GINE Pretrain, eps=1e-02, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=6.727s, verified=10, unknown=3, violated=0
+  [20/100] (graph 20) time=5.775s, verified=12, unknown=1, violated=0
+  [30/100] (graph 30) time=5.200s, verified=11, unknown=2, violated=0
+  [40/100] (graph 40) time=5.387s, verified=10, unknown=3, violated=0
+  [50/100] (graph 50) time=5.797s, verified=10, unknown=3, violated=0
+  [60/100] (graph 60) time=5.204s, verified=11, unknown=2, violated=0
+  [70/100] (graph 70) time=5.731s, verified=10, unknown=3, violated=0
+  [80/100] (graph 80) time=5.726s, verified=12, unknown=1, violated=0
+  [90/100] (graph 90) time=6.334s, verified=12, unknown=1, violated=0
+  [100/100] (graph 100) time=5.143s, verified=11, unknown=2, violated=0
+  Summary: verified=1074/1300 (82.6%), unknown=226, violated=0, avg_time=5.790s [edge_eps=1e-03]
+
+  Edge perturbation: eps_edge=1e-02, features=1
+
+--- PF IEEE24 GINE Pretrain, eps=1e-05, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.488s, verified=13, unknown=0, violated=0
+  [20/100] (graph 20) time=0.491s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=0.518s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.530s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.489s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.502s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.492s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.520s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.490s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=0.487s, verified=13, unknown=0, violated=0
+  Summary: verified=1291/1300 (99.3%), unknown=0, violated=9, avg_time=0.502s [edge_eps=1e-02]
+
+--- PF IEEE24 GINE Pretrain, eps=1e-04, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.513s, verified=13, unknown=0, violated=0
+  [20/100] (graph 20) time=0.615s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=0.581s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.698s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.565s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.565s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.501s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.535s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.504s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=0.490s, verified=13, unknown=0, violated=0
+  Summary: verified=1291/1300 (99.3%), unknown=0, violated=9, avg_time=0.546s [edge_eps=1e-02]
+
+--- PF IEEE24 GINE Pretrain, eps=1e-03, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.240s, verified=12, unknown=1, violated=0
+  [20/100] (graph 20) time=0.953s, verified=13, unknown=0, violated=0
+  [30/100] (graph 30) time=1.131s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=1.069s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.980s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=1.146s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.912s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.963s, verified=13, unknown=0, violated=0
+  [90/100] (graph 90) time=0.843s, verified=13, unknown=0, violated=0
+  [100/100] (graph 100) time=1.193s, verified=13, unknown=0, violated=0
+  Summary: verified=1289/1300 (99.2%), unknown=3, violated=8, avg_time=1.005s [edge_eps=1e-02]
+
+--- PF IEEE24 GINE Pretrain, eps=1e-02, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=6.755s, verified=10, unknown=3, violated=0
+  [20/100] (graph 20) time=5.812s, verified=12, unknown=1, violated=0
+  [30/100] (graph 30) time=5.227s, verified=11, unknown=2, violated=0
+  [40/100] (graph 40) time=5.400s, verified=10, unknown=3, violated=0
+  [50/100] (graph 50) time=5.828s, verified=10, unknown=3, violated=0
+  [60/100] (graph 60) time=5.223s, verified=11, unknown=2, violated=0
+  [70/100] (graph 70) time=5.767s, verified=10, unknown=3, violated=0
+  [80/100] (graph 80) time=5.723s, verified=12, unknown=1, violated=0
+  [90/100] (graph 90) time=6.364s, verified=12, unknown=1, violated=0
+  [100/100] (graph 100) time=5.130s, verified=11, unknown=2, violated=0
+  Summary: verified=1073/1300 (82.5%), unknown=227, violated=0, avg_time=5.818s [edge_eps=1e-02]
+
+=== PF IEEE39 [node_edge] (v=[0.94,1.06], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_pf_ieee39.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+  Edge perturbation: eps_edge=1e-03, features=1
+
+--- PF IEEE39 GINE Pretrain, eps=1e-05, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.774s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=0.927s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=0.869s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=0.888s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=0.805s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=0.770s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=0.809s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=0.793s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=0.774s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=0.772s, verified=26, unknown=0, violated=3
+  Summary: verified=2605/2900 (89.8%), unknown=0, violated=295, avg_time=0.809s [edge_eps=1e-03]
+
+--- PF IEEE39 GINE Pretrain, eps=1e-04, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.058s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=1.089s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=1.000s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=1.240s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=1.098s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=0.905s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=1.098s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=1.024s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=0.889s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=0.856s, verified=26, unknown=0, violated=3
+  Summary: verified=2605/2900 (89.8%), unknown=0, violated=295, avg_time=1.034s [edge_eps=1e-03]
+
+--- PF IEEE39 GINE Pretrain, eps=1e-03, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=2.986s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=2.894s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=2.857s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=3.058s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=3.339s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=2.603s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=3.523s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=2.744s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=2.593s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=2.595s, verified=26, unknown=0, violated=3
+  Summary: verified=2600/2900 (89.7%), unknown=9, violated=291, avg_time=2.939s [edge_eps=1e-03]
+
+--- PF IEEE39 GINE Pretrain, eps=1e-02, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=20.633s, verified=20, unknown=9, violated=0
+  [20/100] (graph 20) time=19.140s, verified=23, unknown=6, violated=0
+  [30/100] (graph 30) time=19.739s, verified=20, unknown=9, violated=0
+  [40/100] (graph 40) time=19.003s, verified=22, unknown=7, violated=0
+  [50/100] (graph 50) time=21.102s, verified=20, unknown=9, violated=0
+  [60/100] (graph 60) time=20.517s, verified=20, unknown=9, violated=0
+  [70/100] (graph 70) time=20.647s, verified=20, unknown=9, violated=0
+  [80/100] (graph 80) time=19.996s, verified=20, unknown=9, violated=0
+  [90/100] (graph 90) time=19.602s, verified=21, unknown=8, violated=0
+  [100/100] (graph 100) time=19.748s, verified=20, unknown=9, violated=0
+  Summary: verified=2079/2900 (71.7%), unknown=807, violated=14, avg_time=19.916s [edge_eps=1e-03]
+
+  Edge perturbation: eps_edge=1e-02, features=1
+
+--- PF IEEE39 GINE Pretrain, eps=1e-05, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.879s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=0.935s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=0.905s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=0.909s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=0.837s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=0.814s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=0.821s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=0.841s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=0.783s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=0.780s, verified=26, unknown=0, violated=3
+  Summary: verified=2605/2900 (89.8%), unknown=0, violated=295, avg_time=0.854s [edge_eps=1e-02]
+
+--- PF IEEE39 GINE Pretrain, eps=1e-04, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.055s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=1.105s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=1.172s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=1.280s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=1.180s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=0.951s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=1.177s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=1.043s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=0.890s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=0.871s, verified=26, unknown=0, violated=3
+  Summary: verified=2605/2900 (89.8%), unknown=0, violated=295, avg_time=1.064s [edge_eps=1e-02]
+
+--- PF IEEE39 GINE Pretrain, eps=1e-03, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=2.969s, verified=26, unknown=0, violated=3
+  [20/100] (graph 20) time=2.921s, verified=26, unknown=0, violated=3
+  [30/100] (graph 30) time=2.893s, verified=26, unknown=0, violated=3
+  [40/100] (graph 40) time=3.088s, verified=26, unknown=0, violated=3
+  [50/100] (graph 50) time=3.376s, verified=26, unknown=0, violated=3
+  [60/100] (graph 60) time=2.623s, verified=26, unknown=0, violated=3
+  [70/100] (graph 70) time=3.529s, verified=26, unknown=0, violated=3
+  [80/100] (graph 80) time=2.751s, verified=26, unknown=0, violated=3
+  [90/100] (graph 90) time=2.621s, verified=26, unknown=0, violated=3
+  [100/100] (graph 100) time=2.627s, verified=26, unknown=0, violated=3
+  Summary: verified=2600/2900 (89.7%), unknown=9, violated=291, avg_time=2.967s [edge_eps=1e-02]
+
+--- PF IEEE39 GINE Pretrain, eps=1e-02, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=20.653s, verified=20, unknown=9, violated=0
+  [20/100] (graph 20) time=19.146s, verified=23, unknown=6, violated=0
+  [30/100] (graph 30) time=19.753s, verified=20, unknown=9, violated=0
+  [40/100] (graph 40) time=19.088s, verified=22, unknown=7, violated=0
+  [50/100] (graph 50) time=21.193s, verified=20, unknown=9, violated=0
+  [60/100] (graph 60) time=20.608s, verified=20, unknown=9, violated=0
+  [70/100] (graph 70) time=20.702s, verified=20, unknown=9, violated=0
+  [80/100] (graph 80) time=20.068s, verified=20, unknown=9, violated=0
+  [90/100] (graph 90) time=19.728s, verified=21, unknown=8, violated=0
+  [100/100] (graph 100) time=19.881s, verified=20, unknown=9, violated=0
+  Summary: verified=2077/2900 (71.6%), unknown=809, violated=14, avg_time=19.993s [edge_eps=1e-02]
+
+=== PF IEEE118 [node_edge] (v=[0.94,1.09], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_pf_ieee118.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+  Edge perturbation: eps_edge=1e-03, features=1
+
+--- PF IEEE118 GINE Pretrain, eps=1e-05, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=3.824s, verified=58, unknown=0, violated=6
+  [20/100] (graph 20) time=3.850s, verified=56, unknown=0, violated=8
+  [30/100] (graph 30) time=3.825s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=3.803s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=3.803s, verified=60, unknown=0, violated=4
+  [60/100] (graph 60) time=3.950s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=3.869s, verified=60, unknown=0, violated=4
+  [80/100] (graph 80) time=3.875s, verified=60, unknown=0, violated=4
+  [90/100] (graph 90) time=3.866s, verified=60, unknown=0, violated=4
+  [100/100] (graph 100) time=3.792s, verified=60, unknown=0, violated=4
+  Summary: verified=5884/6400 (91.9%), unknown=0, violated=516, avg_time=3.854s [edge_eps=1e-03]
+
+--- PF IEEE118 GINE Pretrain, eps=1e-04, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=4.024s, verified=58, unknown=0, violated=6
+  [20/100] (graph 20) time=3.957s, verified=56, unknown=0, violated=8
+  [30/100] (graph 30) time=4.047s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=3.973s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=3.930s, verified=60, unknown=0, violated=4
+  [60/100] (graph 60) time=4.202s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=4.143s, verified=60, unknown=0, violated=4
+  [80/100] (graph 80) time=4.183s, verified=60, unknown=0, violated=4
+  [90/100] (graph 90) time=4.021s, verified=60, unknown=0, violated=4
+  [100/100] (graph 100) time=4.069s, verified=60, unknown=0, violated=4
+  Summary: verified=5883/6400 (91.9%), unknown=5, violated=512, avg_time=4.049s [edge_eps=1e-03]
+
+--- PF IEEE118 GINE Pretrain, eps=1e-03, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=5.632s, verified=57, unknown=1, violated=6
+  [20/100] (graph 20) time=5.454s, verified=55, unknown=1, violated=8
+  [30/100] (graph 30) time=5.249s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=5.253s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=5.218s, verified=60, unknown=1, violated=3
+  [60/100] (graph 60) time=5.504s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=5.437s, verified=60, unknown=1, violated=3
+  [80/100] (graph 80) time=5.381s, verified=60, unknown=1, violated=3
+  [90/100] (graph 90) time=5.593s, verified=60, unknown=1, violated=3
+  [100/100] (graph 100) time=5.747s, verified=60, unknown=1, violated=3
+  Summary: verified=5858/6400 (91.5%), unknown=91, violated=451, avg_time=5.543s [edge_eps=1e-03]
+
+--- PF IEEE118 GINE Pretrain, eps=1e-02, edge_eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=20.902s, verified=44, unknown=19, violated=1
+  [20/100] (graph 20) time=20.089s, verified=44, unknown=19, violated=1
+  [30/100] (graph 30) time=20.624s, verified=48, unknown=15, violated=1
+  [40/100] (graph 40) time=20.571s, verified=48, unknown=15, violated=1
+  [50/100] (graph 50) time=20.530s, verified=51, unknown=12, violated=1
+  [60/100] (graph 60) time=20.783s, verified=48, unknown=14, violated=2
+  [70/100] (graph 70) time=20.579s, verified=52, unknown=11, violated=1
+  [80/100] (graph 80) time=20.679s, verified=52, unknown=11, violated=1
+  [90/100] (graph 90) time=20.573s, verified=52, unknown=11, violated=1
+  [100/100] (graph 100) time=20.618s, verified=53, unknown=10, violated=1
+  Summary: verified=4911/6400 (76.7%), unknown=1366, violated=123, avg_time=20.747s [edge_eps=1e-03]
+
+  Edge perturbation: eps_edge=1e-02, features=1
+
+--- PF IEEE118 GINE Pretrain, eps=1e-05, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=4.325s, verified=58, unknown=0, violated=6
+  [20/100] (graph 20) time=4.423s, verified=56, unknown=0, violated=8
+  [30/100] (graph 30) time=4.255s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=4.290s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=4.229s, verified=60, unknown=0, violated=4
+  [60/100] (graph 60) time=4.424s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=4.349s, verified=60, unknown=0, violated=4
+  [80/100] (graph 80) time=4.461s, verified=60, unknown=0, violated=4
+  [90/100] (graph 90) time=4.343s, verified=60, unknown=0, violated=4
+  [100/100] (graph 100) time=4.376s, verified=60, unknown=0, violated=4
+  Summary: verified=5883/6400 (91.9%), unknown=5, violated=512, avg_time=4.372s [edge_eps=1e-02]
+
+--- PF IEEE118 GINE Pretrain, eps=1e-04, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=4.659s, verified=58, unknown=0, violated=6
+  [20/100] (graph 20) time=4.452s, verified=56, unknown=0, violated=8
+  [30/100] (graph 30) time=4.356s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=4.401s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=4.389s, verified=60, unknown=0, violated=4
+  [60/100] (graph 60) time=4.665s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=4.643s, verified=60, unknown=0, violated=4
+  [80/100] (graph 80) time=4.713s, verified=60, unknown=0, violated=4
+  [90/100] (graph 90) time=4.667s, verified=60, unknown=0, violated=4
+  [100/100] (graph 100) time=4.608s, verified=60, unknown=0, violated=4
+  Summary: verified=5881/6400 (91.9%), unknown=8, violated=511, avg_time=4.542s [edge_eps=1e-02]
+
+--- PF IEEE118 GINE Pretrain, eps=1e-03, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=6.142s, verified=57, unknown=1, violated=6
+  [20/100] (graph 20) time=5.936s, verified=55, unknown=1, violated=8
+  [30/100] (graph 30) time=5.783s, verified=58, unknown=0, violated=6
+  [40/100] (graph 40) time=5.660s, verified=58, unknown=0, violated=6
+  [50/100] (graph 50) time=5.738s, verified=60, unknown=1, violated=3
+  [60/100] (graph 60) time=5.880s, verified=58, unknown=0, violated=6
+  [70/100] (graph 70) time=5.848s, verified=60, unknown=1, violated=3
+  [80/100] (graph 80) time=5.881s, verified=60, unknown=1, violated=3
+  [90/100] (graph 90) time=5.937s, verified=60, unknown=1, violated=3
+  [100/100] (graph 100) time=6.170s, verified=60, unknown=1, violated=3
+  Summary: verified=5857/6400 (91.5%), unknown=94, violated=449, avg_time=5.977s [edge_eps=1e-02]
+
+--- PF IEEE118 GINE Pretrain, eps=1e-02, edge_eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=21.547s, verified=44, unknown=19, violated=1
+  [20/100] (graph 20) time=20.640s, verified=43, unknown=20, violated=1
+  [30/100] (graph 30) time=21.188s, verified=48, unknown=15, violated=1
+  [40/100] (graph 40) time=21.317s, verified=48, unknown=15, violated=1
+  [50/100] (graph 50) time=21.052s, verified=51, unknown=12, violated=1
+  [60/100] (graph 60) time=21.302s, verified=48, unknown=14, violated=2
+  [70/100] (graph 70) time=21.150s, verified=52, unknown=11, violated=1
+  [80/100] (graph 80) time=21.192s, verified=52, unknown=11, violated=1
+  [90/100] (graph 90) time=21.096s, verified=52, unknown=11, violated=1
+  [100/100] (graph 100) time=21.184s, verified=53, unknown=10, violated=1
+  Summary: verified=4904/6400 (76.6%), unknown=1373, violated=123, avg_time=21.314s [edge_eps=1e-02]
+
+Intermediate save: 310.7 minutes elapsed
+
+########################################################
+  OPF - node only
+########################################################
+
+=== OPF IEEE24 [node_only] (v=[0.95,1.05], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_opf_ieee24.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- OPF IEEE24 GINE Pretrain, eps=1e-05 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.205s, verified=12, unknown=0, violated=1
+  [20/100] (graph 20) time=0.254s, verified=12, unknown=0, violated=1
+  [30/100] (graph 30) time=0.205s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.205s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.203s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.215s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.205s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.205s, verified=12, unknown=0, violated=1
+  [90/100] (graph 90) time=0.235s, verified=12, unknown=0, violated=1
+  [100/100] (graph 100) time=0.204s, verified=13, unknown=0, violated=0
+  Summary: verified=1247/1300 (95.9%), unknown=0, violated=53, avg_time=0.211s
+
+--- OPF IEEE24 GINE Pretrain, eps=1e-04 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.534s, verified=12, unknown=0, violated=1
+  [20/100] (graph 20) time=0.265s, verified=12, unknown=0, violated=1
+  [30/100] (graph 30) time=0.224s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.285s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.373s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.304s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.316s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.275s, verified=12, unknown=0, violated=1
+  [90/100] (graph 90) time=0.362s, verified=12, unknown=0, violated=1
+  [100/100] (graph 100) time=0.217s, verified=13, unknown=0, violated=0
+  Summary: verified=1247/1300 (95.9%), unknown=0, violated=53, avg_time=0.269s
+
+--- OPF IEEE24 GINE Pretrain, eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.532s, verified=12, unknown=0, violated=1
+  [20/100] (graph 20) time=1.000s, verified=12, unknown=0, violated=1
+  [30/100] (graph 30) time=1.033s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=0.855s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=0.929s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=0.719s, verified=13, unknown=0, violated=0
+  [70/100] (graph 70) time=0.918s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=0.921s, verified=12, unknown=0, violated=1
+  [90/100] (graph 90) time=0.936s, verified=12, unknown=0, violated=1
+  [100/100] (graph 100) time=0.929s, verified=13, unknown=0, violated=0
+  Summary: verified=1247/1300 (95.9%), unknown=1, violated=52, avg_time=0.894s
+
+--- OPF IEEE24 GINE Pretrain, eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=9.728s, verified=12, unknown=0, violated=1
+  [20/100] (graph 20) time=7.709s, verified=12, unknown=0, violated=1
+  [30/100] (graph 30) time=7.492s, verified=13, unknown=0, violated=0
+  [40/100] (graph 40) time=6.849s, verified=13, unknown=0, violated=0
+  [50/100] (graph 50) time=6.792s, verified=13, unknown=0, violated=0
+  [60/100] (graph 60) time=7.646s, verified=12, unknown=1, violated=0
+  [70/100] (graph 70) time=6.724s, verified=13, unknown=0, violated=0
+  [80/100] (graph 80) time=7.829s, verified=12, unknown=0, violated=1
+  [90/100] (graph 90) time=8.431s, verified=12, unknown=0, violated=1
+  [100/100] (graph 100) time=7.886s, verified=13, unknown=0, violated=0
+  Summary: verified=1238/1300 (95.2%), unknown=21, violated=41, avg_time=7.649s
+
+=== OPF IEEE39 [node_only] (v=[0.94,1.06], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_opf_ieee39.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- OPF IEEE39 GINE Pretrain, eps=1e-05 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.413s, verified=28, unknown=0, violated=1
+  [20/100] (graph 20) time=0.403s, verified=28, unknown=0, violated=1
+  [30/100] (graph 30) time=0.456s, verified=28, unknown=0, violated=1
+  [40/100] (graph 40) time=0.413s, verified=28, unknown=0, violated=1
+  [50/100] (graph 50) time=0.400s, verified=28, unknown=0, violated=1
+  [60/100] (graph 60) time=0.401s, verified=28, unknown=0, violated=1
+  [70/100] (graph 70) time=0.444s, verified=28, unknown=0, violated=1
+  [80/100] (graph 80) time=0.445s, verified=28, unknown=0, violated=1
+  [90/100] (graph 90) time=0.406s, verified=28, unknown=0, violated=1
+  [100/100] (graph 100) time=0.455s, verified=28, unknown=0, violated=1
+  Summary: verified=2800/2900 (96.6%), unknown=0, violated=100, avg_time=0.416s
+
+--- OPF IEEE39 GINE Pretrain, eps=1e-04 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=0.541s, verified=28, unknown=0, violated=1
+  [20/100] (graph 20) time=0.647s, verified=28, unknown=0, violated=1
+  [30/100] (graph 30) time=0.574s, verified=28, unknown=0, violated=1
+  [40/100] (graph 40) time=0.500s, verified=28, unknown=0, violated=1
+  [50/100] (graph 50) time=0.514s, verified=28, unknown=0, violated=1
+  [60/100] (graph 60) time=0.482s, verified=28, unknown=0, violated=1
+  [70/100] (graph 70) time=0.530s, verified=28, unknown=0, violated=1
+  [80/100] (graph 80) time=0.513s, verified=28, unknown=0, violated=1
+  [90/100] (graph 90) time=0.495s, verified=28, unknown=0, violated=1
+  [100/100] (graph 100) time=0.543s, verified=28, unknown=0, violated=1
+  Summary: verified=2800/2900 (96.6%), unknown=0, violated=100, avg_time=0.523s
+
+--- OPF IEEE39 GINE Pretrain, eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=2.094s, verified=28, unknown=0, violated=1
+  [20/100] (graph 20) time=1.980s, verified=28, unknown=0, violated=1
+  [30/100] (graph 30) time=1.849s, verified=28, unknown=0, violated=1
+  [40/100] (graph 40) time=1.796s, verified=28, unknown=0, violated=1
+  [50/100] (graph 50) time=1.764s, verified=28, unknown=0, violated=1
+  [60/100] (graph 60) time=1.957s, verified=28, unknown=0, violated=1
+  [70/100] (graph 70) time=2.081s, verified=28, unknown=0, violated=1
+  [80/100] (graph 80) time=2.101s, verified=28, unknown=0, violated=1
+  [90/100] (graph 90) time=2.138s, verified=28, unknown=0, violated=1
+  [100/100] (graph 100) time=2.050s, verified=28, unknown=0, violated=1
+  Summary: verified=2800/2900 (96.6%), unknown=0, violated=100, avg_time=2.024s
+
+--- OPF IEEE39 GINE Pretrain, eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=16.719s, verified=28, unknown=0, violated=1
+  [20/100] (graph 20) time=16.043s, verified=27, unknown=1, violated=1
+  [30/100] (graph 30) time=17.327s, verified=28, unknown=0, violated=1
+  [40/100] (graph 40) time=17.222s, verified=28, unknown=0, violated=1
+  [50/100] (graph 50) time=16.820s, verified=28, unknown=0, violated=1
+  [60/100] (graph 60) time=16.163s, verified=28, unknown=0, violated=1
+  [70/100] (graph 70) time=16.734s, verified=28, unknown=0, violated=1
+  [80/100] (graph 80) time=16.778s, verified=28, unknown=0, violated=1
+  [90/100] (graph 90) time=15.528s, verified=26, unknown=2, violated=1
+  [100/100] (graph 100) time=16.024s, verified=27, unknown=1, violated=1
+  Summary: verified=2749/2900 (94.8%), unknown=57, violated=94, avg_time=16.458s
+
+=== OPF IEEE118 [node_only] (v=[0.94,1.09], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_opf_ieee118.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- OPF IEEE118 GINE Pretrain, eps=1e-05 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.306s, verified=64, unknown=0, violated=0
+  [20/100] (graph 20) time=1.307s, verified=64, unknown=0, violated=0
+  [30/100] (graph 30) time=1.367s, verified=64, unknown=0, violated=0
+  [40/100] (graph 40) time=1.407s, verified=64, unknown=0, violated=0
+  [50/100] (graph 50) time=1.330s, verified=64, unknown=0, violated=0
+  [60/100] (graph 60) time=1.311s, verified=64, unknown=0, violated=0
+  [70/100] (graph 70) time=1.299s, verified=64, unknown=0, violated=0
+  [80/100] (graph 80) time=1.315s, verified=64, unknown=0, violated=0
+  [90/100] (graph 90) time=1.342s, verified=64, unknown=0, violated=0
+  [100/100] (graph 100) time=1.353s, verified=64, unknown=0, violated=0
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=1.335s
+
+--- OPF IEEE118 GINE Pretrain, eps=1e-04 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=1.804s, verified=64, unknown=0, violated=0
+  [20/100] (graph 20) time=1.525s, verified=64, unknown=0, violated=0
+  [30/100] (graph 30) time=1.993s, verified=64, unknown=0, violated=0
+  [40/100] (graph 40) time=1.734s, verified=64, unknown=0, violated=0
+  [50/100] (graph 50) time=1.701s, verified=64, unknown=0, violated=0
+  [60/100] (graph 60) time=1.656s, verified=64, unknown=0, violated=0
+  [70/100] (graph 70) time=1.705s, verified=64, unknown=0, violated=0
+  [80/100] (graph 80) time=1.856s, verified=64, unknown=0, violated=0
+  [90/100] (graph 90) time=1.755s, verified=64, unknown=0, violated=0
+  [100/100] (graph 100) time=1.723s, verified=64, unknown=0, violated=0
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=1.760s
+
+--- OPF IEEE118 GINE Pretrain, eps=1e-03 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=6.557s, verified=64, unknown=0, violated=0
+  [20/100] (graph 20) time=6.213s, verified=64, unknown=0, violated=0
+  [30/100] (graph 30) time=6.743s, verified=64, unknown=0, violated=0
+  [40/100] (graph 40) time=5.976s, verified=64, unknown=0, violated=0
+  [50/100] (graph 50) time=5.782s, verified=64, unknown=0, violated=0
+  [60/100] (graph 60) time=6.217s, verified=64, unknown=0, violated=0
+  [70/100] (graph 70) time=5.590s, verified=64, unknown=0, violated=0
+  [80/100] (graph 80) time=6.961s, verified=64, unknown=0, violated=0
+  [90/100] (graph 90) time=5.834s, verified=64, unknown=0, violated=0
+  [100/100] (graph 100) time=5.249s, verified=64, unknown=0, violated=0
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=5.799s
+
+--- OPF IEEE118 GINE Pretrain, eps=1e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=76.626s, verified=64, unknown=0, violated=0
+  [20/100] (graph 20) time=56.335s, verified=64, unknown=0, violated=0
+  [30/100] (graph 30) time=52.561s, verified=64, unknown=0, violated=0
+  [40/100] (graph 40) time=56.351s, verified=64, unknown=0, violated=0
+  [50/100] (graph 50) time=1665.253s, verified=64, unknown=0, violated=0
+  [60/100] (graph 60) time=54.678s, verified=64, unknown=0, violated=0
+  [70/100] (graph 70) time=60.324s, verified=64, unknown=0, violated=0
+  [80/100] (graph 80) time=51.577s, verified=64, unknown=0, violated=0
+  [90/100] (graph 90) time=53.975s, verified=64, unknown=0, violated=0
+  [100/100] (graph 100) time=48.879s, verified=64, unknown=0, violated=0
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=84.012s
+
+Intermediate save: 513.0 minutes elapsed
+Skipping edge perturbation for OPF (PF only)
+
+================================================================
+  GRAND SUMMARY — HuGINE (Hu et al.)
+================================================================
+
+--- PF / node only ---
+
+  IEEE24:
+  Time       |    0.222s |    0.241s |    0.655s |    5.111s |
+  Verified   | 1291/1300  | 1291/1300  | 1289/1300  | 1075/1300  |
+  Pct        |    99.3%  |    99.3%  |    99.2%  |    82.7%  |
+
+  IEEE39:
+  Time       |    0.431s |    0.629s |    2.446s |   18.501s |
+  Verified   | 2605/2900  | 2605/2900  | 2600/2900  | 2080/2900  |
+  Pct        |    89.8%  |    89.8%  |    89.7%  |    71.7%  |
+
+  IEEE118:
+  Time       |    1.305s |    1.466s |    2.777s |   16.917s |
+  Verified   | 5884/6400  | 5883/6400  | 5858/6400  | 4912/6400  |
+  Pct        |    91.9%  |    91.9%  |    91.5%  |    76.8%  |
+
+--- PF / node edge ---
+
+  IEEE24 (edge_eps=1e-03):
+  Time       |    0.501s |    0.536s |    0.996s |    5.790s |
+  Verified   | 1291/1300  | 1291/1300  | 1289/1300  | 1074/1300  |
+  Pct        |    99.3%  |    99.3%  |    99.2%  |    82.6%  |
+
+  IEEE24 (edge_eps=1e-02):
+  Time       |    0.502s |    0.546s |    1.005s |    5.818s |
+  Verified   | 1291/1300  | 1291/1300  | 1289/1300  | 1073/1300  |
+  Pct        |    99.3%  |    99.3%  |    99.2%  |    82.5%  |
+
+  IEEE39 (edge_eps=1e-03):
+  Time       |    0.809s |    1.034s |    2.939s |   19.916s |
+  Verified   | 2605/2900  | 2605/2900  | 2600/2900  | 2079/2900  |
+  Pct        |    89.8%  |    89.8%  |    89.7%  |    71.7%  |
+
+  IEEE39 (edge_eps=1e-02):
+  Time       |    0.854s |    1.064s |    2.967s |   19.993s |
+  Verified   | 2605/2900  | 2605/2900  | 2600/2900  | 2077/2900  |
+  Pct        |    89.8%  |    89.8%  |    89.7%  |    71.6%  |
+
+  IEEE118 (edge_eps=1e-03):
+  Time       |    3.854s |    4.049s |    5.543s |   20.747s |
+  Verified   | 5884/6400  | 5883/6400  | 5858/6400  | 4911/6400  |
+  Pct        |    91.9%  |    91.9%  |    91.5%  |    76.7%  |
+
+  IEEE118 (edge_eps=1e-02):
+  Time       |    4.372s |    4.542s |    5.977s |   21.314s |
+  Verified   | 5883/6400  | 5881/6400  | 5857/6400  | 4904/6400  |
+  Pct        |    91.9%  |    91.9%  |    91.5%  |    76.6%  |
+
+--- OPF / node only ---
+
+  IEEE24:
+  Time       |    0.211s |    0.269s |    0.894s |    7.649s |
+  Verified   | 1247/1300  | 1247/1300  | 1247/1300  | 1238/1300  |
+  Pct        |    95.9%  |    95.9%  |    95.9%  |    95.2%  |
+
+  IEEE39:
+  Time       |    0.416s |    0.523s |    2.024s |   16.458s |
+  Verified   | 2800/2900  | 2800/2900  | 2800/2900  | 2749/2900  |
+  Pct        |    96.6%  |    96.6%  |    96.6%  |    94.8%  |
+
+  IEEE118:
+  Time       |    1.335s |    1.760s |    5.799s |   84.012s |
+  Verified   | 6400/6400  | 6400/6400  | 6400/6400  | 6400/6400  |
+  Pct        |   100.0%  |   100.0%  |   100.0%  |   100.0%  |
+
+================================================================
+
+Total time: 30777.4 seconds (513.0 minutes)
+Saved: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/hugine_260318-234658/hugine_results.csv
+Results saved to: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/hugine_260318-234658

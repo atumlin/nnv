@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\caption{HuGINE verification robustness (\% verified safe) for node-only perturbation.}
+\label{tab:hugine_robustness}
+\setlength{\tabcolsep}{10pt}
+\begin{tabular}{l l c c c c}
+\toprule
+& & \multicolumn{4}{c}{Verified (\%) per $\epsilon_{\mathrm{node}}$} \\
+\cmidrule(lr){3-6}
+\textbf{Task} & \textbf{System} & $10^{-5}$ & $10^{-4}$ & $10^{-3}$ & $10^{-2}$ \\
+\midrule
+\multirow{3}{*}{\textit{OPF}} & IEEE-24 & 95.9 & 95.9 & 95.9 & 95.2 \\
+ & IEEE-39 & 96.5 & 96.5 & 96.5 & 94.8 \\
+ & IEEE-118 & 100.0 & 100.0 & 100.0 & 100.0 \\
+\midrule
+\multirow{3}{*}{\textit{PF}} & IEEE-24 & 99.3 & 99.3 & 99.2 & 82.7 \\
+ & IEEE-39 & 89.8 & 89.8 & 89.7 & 71.7 \\
+ & IEEE-118 & 91.9 & 91.9 & 91.5 & 76.8 \\
+\bottomrule
+\end{tabular}
+\end{table}

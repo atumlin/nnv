@@ -1,0 +1,116 @@
+
+================================================================
+   Full PF + OPF Verification Experiments
+================================================================
+Tasks: opf
+Architectures: GINE Conv
+Edge perturbation archs: gine_linear, gine_conv
+Grids: ieee24, ieee39, ieee118
+Node epsilon values: [0.001 0.005 0.01]
+Edge epsilon: 0.010 (fixed)
+Test graphs: 100
+Perturbed node features: [1 2] (power injections)
+Perturbed edge features: 1 (impedance)
+Voltage spec: per-grid (ieee24:[0.95,1.05], ieee39:[0.94,1.06], ieee118:[0.94,1.09])
+Perturbation modes: node_only
+Results: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260316-225724
+================================================================
+
+
+########################################################
+  OPF — node only
+########################################################
+
+=== OPF IEEE24 [node_only] (v=[0.95,1.05]) ===
+
+Loading GINE Conv from gine_conv_opf_ieee24.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 208)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- OPF IEEE24 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=1236/1300 (95.1%), unknown=4, violated=60, avg_time=1.993s
+
+--- OPF IEEE24 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=1234/1300 (94.9%), unknown=9, violated=57, avg_time=8.102s
+
+--- OPF IEEE24 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=1229/1300 (94.5%), unknown=27, violated=44, avg_time=16.741s
+
+=== OPF IEEE39 [node_only] (v=[0.94,1.06]) ===
+
+Loading GINE Conv from gine_conv_opf_ieee39.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 208)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- OPF IEEE39 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=2716/2900 (93.7%), unknown=2, violated=182, avg_time=3.548s
+
+--- OPF IEEE39 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=2714/2900 (93.6%), unknown=19, violated=167, avg_time=13.914s
+
+--- OPF IEEE39 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=2708/2900 (93.4%), unknown=192, violated=0, avg_time=26.399s
+
+=== OPF IEEE118 [node_only] (v=[0.94,1.09]) ===
+
+Loading GINE Conv from gine_conv_opf_ieee118.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 208)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- OPF IEEE118 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=12.775s
+
+--- OPF IEEE118 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=62.686s
+
+--- OPF IEEE118 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+[Warning: A worker aborted during execution of the parfor loop. The parfor loop
+will now run again on the remaining workers.] 
+[> In parallel.internal.parfor/ParforEngine/handleIntervalErrorResult (line 285)
+In parallel.internal.parfor/ParforEngine/getCompleteIntervals (line 227)
+In parallel_function>distributed_execution (line 742)
+In parallel_function (line 574)
+In run_all_experiments (line 265)] 
+[Warning: A worker aborted during execution of the parfor loop. The parfor loop
+will now run again on the remaining workers.] 
+[> In parallel.internal.parfor/ParforEngine/handleIntervalErrorResult (line 285)
+In parallel.internal.parfor/ParforEngine/getCompleteIntervals (line 227)
+In parallel_function>distributed_execution (line 742)
+In parallel_function (line 574)
+In run_all_experiments (line 265)] 

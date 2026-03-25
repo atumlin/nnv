@@ -1,0 +1,50 @@
+
+================================================================
+   Full PF + OPF Verification Experiments
+================================================================
+Tasks: opf
+Architectures: GINE Conv
+Edge perturbation archs: gine_linear, gine_conv
+Grids: ieee118
+Node epsilon values: [0.001 0.005 0.01]
+Edge epsilon: 0.001 (fixed)
+Test graphs: 10
+Perturbed node features: [1 2] (power injections)
+Perturbed edge features: 1 (impedance)
+Voltage spec: per-grid (ieee24:[0.95,1.05], ieee39:[0.94,1.06], ieee118:[0.94,1.09])
+Perturbation modes: node_only
+Results: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260315-164232
+================================================================
+
+
+########################################################
+  OPF — node only
+########################################################
+
+=== OPF IEEE118 [node_only] (v=[0.94,1.09]) ===
+
+Loading GINE Conv from gine_conv_opf_ieee118.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 10
+  GT voltage filter: 10/10 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- OPF IEEE118 GINE Conv, eps=0.001 (10 graphs, 10 safe) ---
+  [10/10] (graph 10) time=12.040s, verified=64, unknown=0, violated=0
+  Summary: verified=640/640 (100.0%), unknown=0, violated=0, avg_time=11.871s
+
+--- OPF IEEE118 GINE Conv, eps=0.005 (10 graphs, 10 safe) ---
+  [10/10] (graph 10) time=56.077s, verified=64, unknown=0, violated=0
+  Summary: verified=640/640 (100.0%), unknown=0, violated=0, avg_time=57.340s
+
+--- OPF IEEE118 GINE Conv, eps=0.010 (10 graphs, 10 safe) ---

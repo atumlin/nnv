@@ -1,0 +1,387 @@
+
+================================================================
+   Full PF + OPF Verification Experiments
+================================================================
+Tasks: pf
+Architectures: GCN, SAGEConv, GINE Linear, GINE Conv
+Edge perturbation archs: gine_linear, gine_conv
+Grids: ieee24, ieee39, ieee118
+Node epsilon values: [0.001 0.005 0.01]
+Edge epsilon: 0.001 (fixed)
+Test graphs: 100
+Perturbed node features: [1 2] (power injections)
+Perturbed edge features: 1 (impedance)
+Voltage spec: per-grid (ieee24:[0.95,1.05], ieee39:[0.94,1.06], ieee118:[0.94,1.09])
+Perturbation modes: node_only
+Results: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260316-113847
+================================================================
+
+
+########################################################
+  PF — node only
+########################################################
+
+=== PF IEEE24 [node_only] (v=[0.95,1.05]) ===
+
+Loading GCN from gcn_pf_ieee24.mat...
+gnn2nnv: Detected model type: gcn
+gnn2nnv: Building GCN with 3 conv layers
+  Layer 1: GCNLayer 4 -> 32
+  Layer 2: GCNLayer 32 -> 32
+  Layer 3: GCNLayer 32 -> 4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 6 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- PF IEEE24 GCN, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=47/1300 (3.6%), unknown=49, violated=1204, avg_time=1.395s
+
+--- PF IEEE24 GCN, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=14/1300 (1.1%), unknown=271, violated=1015, avg_time=5.448s
+
+--- PF IEEE24 GCN, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=0/1300 (0.0%), unknown=577, violated=723, avg_time=10.625s
+
+Loading SAGEConv from sage_pf_ieee24.mat...
+gnn2nnv: Detected model type: sage
+gnn2nnv: Building SAGEConv with 3 conv layers
+  Layer 1: SAGEConvLayer 4 -> 32
+  Layer 2: SAGEConvLayer 32 -> 32
+  Layer 3: SAGEConvLayer 32 -> 4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 6 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- PF IEEE24 SAGEConv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=1298/1300 (99.8%), unknown=0, violated=2, avg_time=0.378s
+
+--- PF IEEE24 SAGEConv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=1298/1300 (99.8%), unknown=1, violated=1, avg_time=1.861s
+
+--- PF IEEE24 SAGEConv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=1295/1300 (99.6%), unknown=4, violated=1, avg_time=3.723s
+
+Loading GINE Linear from gine_linear_pf_ieee24.mat...
+gnn2nnv: Detected model type: gine_linear
+gnn2nnv: Building simplified GINE with 3 layers
+  Layer 1: GINELayer node 4->32, edge 2->32
+  Layer 2: GINELayer node 32->32, edge 2->32
+  Layer 3: GINELayer node 32->4, edge 2->4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 3 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- PF IEEE24 GINE Linear, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=702/1300 (54.0%), unknown=157, violated=441, avg_time=1.479s
+
+--- PF IEEE24 GINE Linear, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=660/1300 (50.8%), unknown=378, violated=262, avg_time=6.468s
+
+--- PF IEEE24 GINE Linear, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=571/1300 (43.9%), unknown=545, violated=184, avg_time=12.623s
+
+Loading GINE Conv from gine_conv_pf_ieee24.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- PF IEEE24 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=1143/1300 (87.9%), unknown=80, violated=77, avg_time=1.902s
+
+--- PF IEEE24 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=906/1300 (69.7%), unknown=388, violated=6, avg_time=9.445s
+
+--- PF IEEE24 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=338/1300 (26.0%), unknown=960, violated=2, avg_time=19.481s
+
+=== PF IEEE39 [node_only] (v=[0.94,1.06]) ===
+
+Loading GCN from gcn_pf_ieee39.mat...
+gnn2nnv: Detected model type: gcn
+gnn2nnv: Building GCN with 3 conv layers
+  Layer 1: GCNLayer 4 -> 32
+  Layer 2: GCNLayer 32 -> 32
+  Layer 3: GCNLayer 32 -> 4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 6 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- PF IEEE39 GCN, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=464/2900 (16.0%), unknown=11, violated=2425, avg_time=0.083s
+
+--- PF IEEE39 GCN, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=448/2900 (15.4%), unknown=55, violated=2397, avg_time=0.389s
+
+--- PF IEEE39 GCN, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=431/2900 (14.9%), unknown=101, violated=2368, avg_time=0.992s
+
+Loading SAGEConv from sage_pf_ieee39.mat...
+gnn2nnv: Detected model type: sage
+gnn2nnv: Building SAGEConv with 3 conv layers
+  Layer 1: SAGEConvLayer 4 -> 32
+  Layer 2: SAGEConvLayer 32 -> 32
+  Layer 3: SAGEConvLayer 32 -> 4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 6 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- PF IEEE39 SAGEConv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=2601/2900 (89.7%), unknown=1, violated=298, avg_time=1.206s
+
+--- PF IEEE39 SAGEConv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=2575/2900 (88.8%), unknown=29, violated=296, avg_time=5.808s
+
+--- PF IEEE39 SAGEConv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=2514/2900 (86.7%), unknown=101, violated=285, avg_time=13.505s
+
+Loading GINE Linear from gine_linear_pf_ieee39.mat...
+gnn2nnv: Detected model type: gine_linear
+gnn2nnv: Building simplified GINE with 3 layers
+  Layer 1: GINELayer node 4->32, edge 2->32
+  Layer 2: GINELayer node 32->32, edge 2->32
+  Layer 3: GINELayer node 32->4, edge 2->4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 3 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- PF IEEE39 GINE Linear, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=2844/2900 (98.1%), unknown=37, violated=19, avg_time=6.556s
+
+--- PF IEEE39 GINE Linear, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=2492/2900 (85.9%), unknown=408, violated=0, avg_time=28.578s
+
+--- PF IEEE39 GINE Linear, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=2305/2900 (79.5%), unknown=595, violated=0, avg_time=50.672s
+
+Loading GINE Conv from gine_conv_pf_ieee39.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- PF IEEE39 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=2601/2900 (89.7%), unknown=28, violated=271, avg_time=3.637s
+
+--- PF IEEE39 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=2502/2900 (86.3%), unknown=279, violated=119, avg_time=16.910s
+
+--- PF IEEE39 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=2445/2900 (84.3%), unknown=352, violated=103, avg_time=30.172s
+
+=== PF IEEE118 [node_only] (v=[0.94,1.09]) ===
+
+Loading GCN from gcn_pf_ieee118.mat...
+gnn2nnv: Detected model type: gcn
+gnn2nnv: Building GCN with 3 conv layers
+  Layer 1: GCNLayer 4 -> 32
+  Layer 2: GCNLayer 32 -> 32
+  Layer 3: GCNLayer 32 -> 4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 6 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- PF IEEE118 GCN, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=983/6400 (15.4%), unknown=19, violated=5398, avg_time=0.609s
+
+--- PF IEEE118 GCN, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=846/6400 (13.2%), unknown=211, violated=5343, avg_time=2.731s
+
+--- PF IEEE118 GCN, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=779/6400 (12.2%), unknown=341, violated=5280, avg_time=5.522s
+
+Loading SAGEConv from sage_pf_ieee118.mat...
+gnn2nnv: Detected model type: sage
+gnn2nnv: Building SAGEConv with 3 conv layers
+  Layer 1: SAGEConvLayer 4 -> 32
+  Layer 2: SAGEConvLayer 32 -> 32
+  Layer 3: SAGEConvLayer 32 -> 4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 6 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- PF IEEE118 SAGEConv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=1.791s
+
+--- PF IEEE118 SAGEConv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=9.450s
+
+--- PF IEEE118 SAGEConv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=17.540s
+
+Loading GINE Linear from gine_linear_pf_ieee118.mat...
+gnn2nnv: Detected model type: gine_linear
+gnn2nnv: Building simplified GINE with 3 layers
+  Layer 1: GINELayer node 4->32, edge 2->32
+  Layer 2: GINELayer node 32->32, edge 2->32
+  Layer 3: GINELayer node 32->4, edge 2->4
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 3 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- PF IEEE118 GINE Linear, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=6353/6400 (99.3%), unknown=29, violated=18, avg_time=8.507s
+
+--- PF IEEE118 GINE Linear, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=6301/6400 (98.5%), unknown=99, violated=0, avg_time=44.885s
+
+--- PF IEEE118 GINE Linear, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=6265/6400 (97.9%), unknown=135, violated=0, avg_time=84.325s
+
+Loading GINE Conv from gine_conv_pf_ieee118.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 207)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- PF IEEE118 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=7.914s
+
+--- PF IEEE118 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=37.879s
+
+--- PF IEEE118 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=81.617s
+
+Intermediate save: 120.2 minutes elapsed
+
+================================================================
+  GRAND SUMMARY (GT-filtered: only safe operating conditions)
+================================================================
+
+--- PF / node only ---
+
+  IEEE24: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.001 | eps=0.005 | eps=0.010 |
+  ------------------------------------------------
+  GCN            |   1.395s |   5.448s |  10.625s |
+  SAGEConv       |   0.378s |   1.861s |   3.723s |
+  GINE Linear    |   1.479s |   6.468s |  12.623s |
+  GINE Conv      |   1.902s |   9.445s |  19.481s |
+
+  Verified       |   eps=0.001   |   eps=0.005   |   eps=0.010   |
+  ------------------------------------------------------------
+  GCN            |   47/1300    4% |   14/1300    1% |    0/1300    0% |
+  SAGEConv       | 1298/1300  100% | 1298/1300  100% | 1295/1300  100% |
+  GINE Linear    |  702/1300   54% |  660/1300   51% |  571/1300   44% |
+  GINE Conv      | 1143/1300   88% |  906/1300   70% |  338/1300   26% |
+
+  IEEE39: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.001 | eps=0.005 | eps=0.010 |
+  ------------------------------------------------
+  GCN            |   0.083s |   0.389s |   0.992s |
+  SAGEConv       |   1.206s |   5.808s |  13.505s |
+  GINE Linear    |   6.556s |  28.578s |  50.672s |
+  GINE Conv      |   3.637s |  16.910s |  30.172s |
+
+  Verified       |   eps=0.001   |   eps=0.005   |   eps=0.010   |
+  ------------------------------------------------------------
+  GCN            |  464/2900   16% |  448/2900   15% |  431/2900   15% |
+  SAGEConv       | 2601/2900   90% | 2575/2900   89% | 2514/2900   87% |
+  GINE Linear    | 2844/2900   98% | 2492/2900   86% | 2305/2900   79% |
+  GINE Conv      | 2601/2900   90% | 2502/2900   86% | 2445/2900   84% |
+
+  IEEE118: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.001 | eps=0.005 | eps=0.010 |
+  ------------------------------------------------
+  GCN            |   0.609s |   2.731s |   5.522s |
+  SAGEConv       |   1.791s |   9.450s |  17.540s |
+  GINE Linear    |   8.507s |  44.885s |  84.325s |
+  GINE Conv      |   7.914s |  37.879s |  81.617s |
+
+  Verified       |   eps=0.001   |   eps=0.005   |   eps=0.010   |
+  ------------------------------------------------------------
+  GCN            |  983/6400   15% |  846/6400   13% |  779/6400   12% |
+  SAGEConv       | 6400/6400  100% | 6400/6400  100% | 6400/6400  100% |
+  GINE Linear    | 6353/6400   99% | 6301/6400   98% | 6265/6400   98% |
+  GINE Conv      | 6400/6400  100% | 6400/6400  100% | 6400/6400  100% |
+
+================================================================
+
+Total time: 7214.3 seconds (120.2 minutes)
+Saved: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260316-113847/all_results.csv
+Results saved to: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260316-113847

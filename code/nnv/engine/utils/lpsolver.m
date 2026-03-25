@@ -59,10 +59,11 @@ function [fval, exitflag] = lpsolver(f, A, b, Aeq, Beq, lb, ub, lp_solver, opts)
             model.ub = ub;
         end
         % Define solver parameters
-        params = struct; % for now, leave default options/params
+        params = struct;
         params.OutputFlag = 0; % no display
-        % params.OptimalityTol = 1e-09;
-        % params.FeasibilityTol = 1e-09;
+        params.OptimalityTol = 1e-10; % match linprog's OptimalityTolerance
+        params.FeasibilityTol = 1e-10; % match linprog's ConstraintTolerance
+        params.Presolve = 0;  % disable presolve: force full simplex, ensures bounds match linprog
         result = gurobi(model, params);
         fval = result.objval; % get fval value from results
         % get exitflag and match those of linprog for easier parsing
@@ -78,8 +79,9 @@ function [fval, exitflag] = lpsolver(f, A, b, Aeq, Beq, lb, ub, lp_solver, opts)
 
     % Solve using linprog (glpk as backup)
     elseif strcmp(lp_solver, 'linprog')
-        options = optimoptions('linprog', 'Display','none'); 
+        options = optimoptions('linprog', 'Display','none');
         options.OptimalityTolerance = 1e-10; % set tolerance
+        % options.MaxTime = 5; % timeout per LP call (seconds) — DISABLED for proper bounds
         % first try solving using linprog
         [~, fval, exitflag, ~] = linprog(f, A, b, Aeq, Beq, lb, ub, options);
         % found (1), not feasible point found (-2), infeasible (-5)

@@ -1,0 +1,3 @@
+Task,Mode,Grid,Node_Epsilon,Edge_Epsilon,Total_Graphs,Safe_Graphs,Skipped_Graphs,Avg_Time_s,Total_Verified,Total_Unknown,Total_Violated,Total_Voltage_Nodes,Pct_Verified,Mean_Bound_Width,Max_Bound_Width
+PF,node_only,ieee24,2e-02,N/A,100,100,0,8.0057,709,591,0,1300,54.54,0.032010,0.327963
+PF,node_only,ieee24,5e-02,N/A,100,100,0,24.8954,28,1272,0,1300,2.15,0.132493,1.085713

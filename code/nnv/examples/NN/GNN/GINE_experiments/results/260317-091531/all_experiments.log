@@ -1,0 +1,135 @@
+
+================================================================
+   Full PF + OPF Verification Experiments
+================================================================
+Tasks: opf
+Architectures: GINE Conv
+Edge perturbation archs: gine_linear, gine_conv
+Grids: ieee24, ieee39, ieee118
+Node epsilon values: [1e-05 0.0001]
+Edge epsilon: 0.010 (fixed)
+Test graphs: 100
+Perturbed node features: [1 2] (power injections)
+Perturbed edge features: 1 (impedance)
+Voltage spec: per-grid (ieee24:[0.95,1.05], ieee39:[0.94,1.06], ieee118:[0.94,1.09])
+Perturbation modes: node_only
+Results: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260317-091531
+================================================================
+
+
+########################################################
+  OPF — node only
+########################################################
+
+=== OPF IEEE24 [node_only] (v=[0.95,1.05]) ===
+
+Loading GINE Conv from gine_conv_opf_ieee24.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 213)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- OPF IEEE24 GINE Conv, eps=0.000 (100 graphs, 100 safe) ---
+  Summary: verified=1238/1300 (95.2%), unknown=0, violated=62, avg_time=0.256s
+
+--- OPF IEEE24 GINE Conv, eps=0.000 (100 graphs, 100 safe) ---
+  Summary: verified=1238/1300 (95.2%), unknown=0, violated=62, avg_time=0.358s
+
+=== OPF IEEE39 [node_only] (v=[0.94,1.06]) ===
+
+Loading GINE Conv from gine_conv_opf_ieee39.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 213)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- OPF IEEE39 GINE Conv, eps=0.000 (100 graphs, 100 safe) ---
+  Summary: verified=2718/2900 (93.7%), unknown=0, violated=182, avg_time=0.492s
+
+--- OPF IEEE39 GINE Conv, eps=0.000 (100 graphs, 100 safe) ---
+  Summary: verified=2717/2900 (93.7%), unknown=1, violated=182, avg_time=0.932s
+
+=== OPF IEEE118 [node_only] (v=[0.94,1.09]) ===
+
+Loading GINE Conv from gine_conv_opf_ieee118.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 213)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- OPF IEEE118 GINE Conv, eps=0.000 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=1.460s
+
+--- OPF IEEE118 GINE Conv, eps=0.000 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=2.841s
+
+Intermediate save: 2.2 minutes elapsed
+
+================================================================
+  GRAND SUMMARY (GT-filtered: only safe operating conditions)
+================================================================
+
+--- OPF / node only ---
+
+  IEEE24: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.000 | eps=0.000 |
+  -------------------------------------
+  GINE Conv      |   0.358s |   0.358s |
+
+  Verified       |   eps=0.000   |   eps=0.000   |
+  ---------------------------------------------
+  GINE Conv      | 1238/1300   95% | 1238/1300   95% |
+
+  IEEE39: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.000 | eps=0.000 |
+  -------------------------------------
+  GINE Conv      |   0.932s |   0.932s |
+
+  Verified       |   eps=0.000   |   eps=0.000   |
+  ---------------------------------------------
+  GINE Conv      | 2717/2900   94% | 2717/2900   94% |
+
+  IEEE118: (100/100 graphs with GT within spec)
+  Architecture   | eps=0.000 | eps=0.000 |
+  -------------------------------------
+  GINE Conv      |   2.841s |   2.841s |
+
+  Verified       |   eps=0.000   |   eps=0.000   |
+  ---------------------------------------------
+  GINE Conv      | 6400/6400  100% | 6400/6400  100% |
+
+================================================================
+
+Total time: 129.7 seconds (2.2 minutes)
+Saved: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260317-091531/all_results.csv
+Results saved to: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260317-091531

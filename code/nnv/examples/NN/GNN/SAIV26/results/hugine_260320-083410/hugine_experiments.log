@@ -1,0 +1,87 @@
+
+================================================================
+   HuGINE (Hu et al.) Full Verification Experiments
+================================================================
+Architecture: GINE Pretrain
+Tasks: pf
+Grids: ieee24
+Node epsilon values: [0.02 0.05]
+Edge epsilon values: [0.001 0.01]
+Test graphs: 100
+Perturbed node features: [1 2] (P, Q)
+Perturbed edge features: 1 (impedance)
+Voltage spec: per-grid (ieee24:[0.95,1.05], ieee39:[0.94,1.06], ieee118:[0.94,1.09])
+Perturbation modes: node_only
+IEEE118: subgraph verification | IEEE24/39: full-graph verification
+Method: approx-star (all grids)
+Results: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/hugine_260320-083410
+================================================================
+
+
+########################################################
+  PF - node only
+########################################################
+
+=== PF IEEE24 [node_only] (v=[0.95,1.05], subgraph=1) ===
+
+Loading GINE Pretrain from gine_pretrain_pf_ieee24.mat...
+gnn2nnv: Detected model type: gine_pretrain
+gnn2nnv: Building Hu et al. GIN+E with 3 conv layers
+  Layer 1: HuGINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2
+  Layer 2: HuGINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2
+  Layer 3: HuGINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 483)
+In gnn2nnv (line 63)
+In run_hugine_full_experiments (line 186)
+In run_hugine_eps01 (line 5)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- PF IEEE24 GINE Pretrain, eps=2e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=9.648s, verified=5, unknown=8, violated=0
+  [20/100] (graph 20) time=7.896s, verified=6, unknown=7, violated=0
+  [30/100] (graph 30) time=6.456s, verified=8, unknown=5, violated=0
+  [40/100] (graph 40) time=6.980s, verified=8, unknown=5, violated=0
+  [50/100] (graph 50) time=7.588s, verified=8, unknown=5, violated=0
+  [60/100] (graph 60) time=6.605s, verified=8, unknown=5, violated=0
+  [70/100] (graph 70) time=7.660s, verified=8, unknown=5, violated=0
+  [80/100] (graph 80) time=8.004s, verified=6, unknown=7, violated=0
+  [90/100] (graph 90) time=8.111s, verified=6, unknown=7, violated=0
+  [100/100] (graph 100) time=6.593s, verified=8, unknown=5, violated=0
+  Summary: verified=709/1300 (54.5%), unknown=591, violated=0, avg_time=8.006s
+
+--- PF IEEE24 GINE Pretrain, eps=5e-02 (100 graphs, 100 safe) ---
+  [10/100] (graph 10) time=28.353s, verified=0, unknown=13, violated=0
+  [20/100] (graph 20) time=24.866s, verified=0, unknown=13, violated=0
+  [30/100] (graph 30) time=23.997s, verified=0, unknown=13, violated=0
+  [40/100] (graph 40) time=24.160s, verified=0, unknown=13, violated=0
+  [50/100] (graph 50) time=23.206s, verified=1, unknown=12, violated=0
+  [60/100] (graph 60) time=23.938s, verified=0, unknown=13, violated=0
+  [70/100] (graph 70) time=23.262s, verified=1, unknown=12, violated=0
+  [80/100] (graph 80) time=24.897s, verified=0, unknown=13, violated=0
+  [90/100] (graph 90) time=26.056s, verified=0, unknown=13, violated=0
+  [100/100] (graph 100) time=24.198s, verified=0, unknown=13, violated=0
+  Summary: verified=28/1300 (2.2%), unknown=1272, violated=0, avg_time=24.895s
+
+Intermediate save: 54.8 minutes elapsed
+
+================================================================
+  GRAND SUMMARY — HuGINE (Hu et al.)
+================================================================
+
+--- PF / node only ---
+
+  IEEE24:
+  Time       |    8.006s |   24.895s |
+  Verified   |  709/1300  |   28/1300  |
+  Pct        |    54.5%  |     2.2%  |
+
+================================================================
+
+Total time: 3290.9 seconds (54.8 minutes)
+Saved: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/hugine_260320-083410/hugine_results.csv
+Results saved to: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/hugine_260320-083410

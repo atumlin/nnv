@@ -238,7 +238,7 @@ classdef LayerS
                     if strcmp(f1, 'purelin')
                         S = [S I1];
                     elseif strcmp(f1, 'poslin')
-                        S = [S PosLin.reach(I1, method, [], obj.relaxFactor, obj.dis_opt, obj.lp_solver)];
+                        S = [S PosLin.reach(I1, method, obj.option, obj.relaxFactor, obj.dis_opt, obj.lp_solver)];
                     elseif strcmp(f1, 'satlin')
                         S = [S SatLin.reach(I1, method, [], obj.dis_opt, obj.lp_solver)];
                     elseif strcmp(f1, 'satlins')

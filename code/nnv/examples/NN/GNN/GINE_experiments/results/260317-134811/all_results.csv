@@ -1,0 +1,2 @@
+Task,Perturbation_Mode,Grid,Architecture,Node_Epsilon,Edge_Epsilon,Total_Graphs,Safe_Graphs,Skipped_Graphs,Avg_Time_s,Total_Verified,Total_Unknown,Total_Violated,Total_Voltage_Nodes,Pct_Verified,Mean_Bound_Width,Max_Bound_Width
+OPF,node_only,ieee118,GINE Conv,0.010,N/A,10,10,0,163.6871,640,0,0,640,100.00,0.002773,0.037544

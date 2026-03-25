@@ -120,7 +120,38 @@ tol_edge = 1e-6;
 assert(all(Y_center_edge(:) >= lb_out_edge(:) - tol_edge), 'Center output should be >= lower bound (edge perturbation)');
 assert(all(Y_center_edge(:) <= ub_out_edge(:) + tol_edge), 'Center output should be <= upper bound (edge perturbation)');
 
-%% 6) Precision change test
+%% 6) Edge perturbation random sample containment
+rng(42);
+E_lb6 = E - 0.05;
+E_ub6 = E + 0.05;
+E_star6 = ImageStar(E_lb6, E_ub6);
+
+GS_out6 = L.reach(GS_in, E_star6, adj_list, 'approx-star');
+[lb_out6, ub_out6] = GS_out6.getRanges();
+tol6 = 1e-6;
+
+num_samples = 50;
+all_in_bounds = true;
+for s = 1:num_samples
+    % Random node input within GraphStar bounds
+    alpha_n = rand(GS_in.numPred, 1) .* (GS_in.pred_ub - GS_in.pred_lb) + GS_in.pred_lb;
+    X_s = GS_in.V(:, :, 1);
+    for k = 1:GS_in.numPred
+        X_s = X_s + alpha_n(k) * GS_in.V(:, :, k+1);
+    end
+    % Random edge input within perturbation bounds
+    E_s = E_lb6 + rand(size(E)) .* (E_ub6 - E_lb6);
+    % Evaluate and check containment
+    Y_s = L.evaluate(X_s, E_s, adj_list);
+    if ~(all(Y_s(:) >= lb_out6(:) - tol6) && all(Y_s(:) <= ub_out6(:) + tol6))
+        all_in_bounds = false;
+        fprintf('Sample %d FAILED containment check\n', s);
+        break;
+    end
+end
+assert(all_in_bounds, 'All random samples should be within output bounds (edge perturbation)');
+
+%% 7) Precision change test
 L_prec = GINEConvLayer('prec_test', W1, b1, W2, b2, W_edge, b_edge);
 L_prec.changeParamsPrecision('single');
 assert(isa(L_prec.MLPWeights1, 'single'), 'MLP weights 1 should be single');
@@ -130,7 +161,7 @@ assert(isa(L_prec.EdgeWeights, 'single'), 'Edge weights should be single');
 L_prec.changeParamsPrecision('double');
 assert(isa(L_prec.MLPWeights1, 'double'), 'MLP weights 1 should be double');
 
-%% 7) Constructor with 6 args (no name)
+%% 8) Constructor with 6 args (no name)
 L_noname = GINEConvLayer(W1, b1, W2, b2, W_edge, b_edge);
 assert(strcmp(L_noname.Name, 'gine_conv_layer'), 'Default name should be gine_conv_layer');
 assert(L_noname.InputSize == F_in, 'InputSize should match with 6-arg constructor');

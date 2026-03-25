@@ -1,0 +1,10 @@
+Task,Perturbation_Mode,Grid,Architecture,Node_Epsilon,Edge_Epsilon,Total_Graphs,Safe_Graphs,Skipped_Graphs,Avg_Time_s,Total_Verified,Total_Unknown,Total_Violated,Total_Voltage_Nodes,Pct_Verified,Mean_Bound_Width,Max_Bound_Width
+PF,node_edge,ieee24,GINE Linear,0.001,0.010,100,100,0,8.3235,647,422,231,1300,49.77,0.002987,0.022650
+PF,node_edge,ieee24,GINE Linear,0.005,0.010,100,100,0,14.8514,580,538,182,1300,44.62,0.005093,0.043974
+PF,node_edge,ieee24,GINE Linear,0.010,0.010,100,100,0,22.6657,477,692,131,1300,36.69,0.007929,0.078172
+PF,node_edge,ieee39,GINE Linear,0.001,0.010,100,100,0,23.5944,2497,403,0,2900,86.10,0.003646,0.026884
+PF,node_edge,ieee39,GINE Linear,0.005,0.010,100,100,0,51.6337,2329,571,0,2900,80.31,0.006656,0.051961
+PF,node_edge,ieee39,GINE Linear,0.010,0.010,100,100,0,78.8226,2194,706,0,2900,75.66,0.010724,0.084824
+PF,node_edge,ieee118,GINE Linear,0.001,0.010,100,100,0,21.7527,6342,52,6,6400,99.09,0.000395,0.013603
+PF,node_edge,ieee118,GINE Linear,0.005,0.010,100,100,0,68.7595,6298,102,0,6400,98.41,0.001441,0.055727
+PF,node_edge,ieee118,GINE Linear,0.010,0.010,100,100,0,120.9013,6261,139,0,6400,97.83,0.002854,0.118053

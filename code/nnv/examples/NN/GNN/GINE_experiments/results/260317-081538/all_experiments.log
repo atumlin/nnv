@@ -1,0 +1,155 @@
+
+================================================================
+   Full PF + OPF Verification Experiments
+================================================================
+Tasks: pf
+Architectures: GINE Conv
+Edge perturbation archs: gine_linear, gine_conv
+Grids: ieee24, ieee39, ieee118
+Node epsilon values: [0.001 0.005 0.01]
+Edge epsilon: 0.010 (fixed)
+Test graphs: 100
+Perturbed node features: [1 2] (power injections)
+Perturbed edge features: 1 (impedance)
+Voltage spec: per-grid (ieee24:[0.95,1.05], ieee39:[0.94,1.06], ieee118:[0.94,1.09])
+Perturbation modes: node_edge
+Results: /home/verivital/Anne/dev/gnnv2/nnv/code/nnv/examples/NN/GNN/SAIV26/results/260317-081538
+================================================================
+
+
+########################################################
+  PF — node edge
+  (edge eps=0.010 fixed, archs: GINE Conv)
+########################################################
+
+=== PF IEEE24 [node_edge] (v=[0.95,1.05]) ===
+
+Loading GINE Conv from gine_conv_pf_ieee24.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 208)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Edge perturbation: eps=0.010, features=1
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.95, 1.05] p.u. (0 skipped)
+
+--- PF IEEE24 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=1105/1300 (85.0%), unknown=149, violated=46, avg_time=3.906s
+
+--- PF IEEE24 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=846/1300 (65.1%), unknown=449, violated=5, avg_time=12.791s
+
+--- PF IEEE24 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=309/1300 (23.8%), unknown=990, violated=1, avg_time=25.848s
+
+=== PF IEEE39 [node_edge] (v=[0.94,1.06]) ===
+
+Loading GINE Conv from gine_conv_pf_ieee39.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 208)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Edge perturbation: eps=0.010, features=1
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.06] p.u. (0 skipped)
+
+--- PF IEEE39 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=2556/2900 (88.1%), unknown=143, violated=201, avg_time=12.832s
+
+--- PF IEEE39 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=2485/2900 (85.7%), unknown=308, violated=107, avg_time=28.531s
+
+--- PF IEEE39 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+  Summary: verified=2394/2900 (82.6%), unknown=404, violated=102, avg_time=45.321s
+
+=== PF IEEE118 [node_edge] (v=[0.94,1.09]) ===
+
+Loading GINE Conv from gine_conv_pf_ieee118.mat...
+gnn2nnv: Detected model type: gine_conv
+gnn2nnv: Building full GINE with 3 conv layers
+  Layer 1: GINEConvLayer F_in=4, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 2: GINEConvLayer F_in=32, hidden=32, F_out=32, E_in=2, eps=0.0000
+  Layer 3: GINEConvLayer F_in=32, hidden=32, F_out=4, E_in=2, eps=0.0000
+gnn2nnv: Validating against Python predictions...
+[Warning: Could not validate predictions: Conversion to double from cell is not
+possible.] 
+[> In gnn2nnv>validate_predictions (line 404)
+In gnn2nnv (line 60)
+In run_all_experiments (line 208)] 
+gnn2nnv: Import complete. GNN has 5 layers.
+  Edge perturbation: eps=0.010, features=1
+  Available test graphs: 100, using: 100
+  GT voltage filter: 100/100 graphs within [0.94, 1.09] p.u. (0 skipped)
+
+--- PF IEEE118 GINE Conv, eps=0.001 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=33.922s
+
+--- PF IEEE118 GINE Conv, eps=0.005 (100 graphs, 100 safe) ---
+  Summary: verified=6400/6400 (100.0%), unknown=0, violated=0, avg_time=72.085s
+
+--- PF IEEE118 GINE Conv, eps=0.010 (100 graphs, 100 safe) ---
+{Error using lpsolver (line 93)
+LP solver error. Task failed to be solved by linprog and glpk. GLPK exitflag =
+1
+
+Error in Star/getMax (line 817)
+                [fval, exitflag] = lpsolver(-f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, lp_solver);
+
+Error in Star/getMaxs (line 870)
+                    xmax(i) = obj.getMax(map(i), lp_solver);
+
+Error in PosLin.reach_star_approx2 (line 753)
+                    xmax = I.getMaxs(map2, option, dis_opt, lp_solver);
+
+Error in PosLin.reach (line 2077)
+                R = PosLin.reach_star_approx2(I, option, dis_opt, lp_solver);
+
+Error in ReluLayer/reach_star_single_input (line 148)
+                images = PosLin.reach(in_image, method, [], relaxFactor, dis_opt, lp_solver); % reachable set computation with ReLU
+
+Error in ActivationFunctionLayer/reach_star_multipleInputs (line 77)
+                    images = [images obj.reach_star_single_input(in_images(i), method, relaxFactor, dis_opt, lp_solver)];
+
+Error in ActivationFunctionLayer/reach (line 165)
+                images = obj.reach_star_multipleInputs(in_images, method, option, relaxFactor, dis_opt, lp_solver);
+
+Error in GINEConvLayer/reach_with_edge_perturbation (line 624)
+            mlp_star_out = L_relu.reach(mlp_star, 'approx-star');
+
+Error in GINEConvLayer/reach_star_single_input (line 351)
+                gs_out = obj.reach_with_edge_perturbation(in_gs, E, adj_list, edge_weights);
+
+Error in GINEConvLayer/reach_star_multipleInputs (line 658)
+                S = obj.reach_star_single_input(in_sets, E, adj_list, edge_weights);
+
+Error in GINEConvLayer/reach (line 322)
+                S = obj.reach_star_multipleInputs(in_sets, E, adj_list, option, edge_weights);
+
+Error in GNN/reach (line 243)
+                    rs = layer.reach(rs, obj.E, obj.adj_list, obj.reachMethod, obj.reachOption, obj.relaxFactor, obj.lp_solver, obj.edge_weights);
+
+Error in GNN/reachSubgraph (line 413)
+                sub_output = sub_gnn.reach(sub_GS, reachOptions);
+
+Error in run_all_experiments>verify_single_graph (line 411)
+            X_phys_sg = X;
+
+Error in run_all_experiments (line 265)
+                    tmp_na_nodes = zeros(n_valid, 1);
+} 

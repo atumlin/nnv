@@ -88,7 +88,38 @@ tol_edge = 1e-6;
 assert(all(Y_center_edge(:) >= lb_out_edge(:) - tol_edge), 'Center output should be >= lower bound (edge perturbation)');
 assert(all(Y_center_edge(:) <= ub_out_edge(:) + tol_edge), 'Center output should be <= upper bound (edge perturbation)');
 
-%% 5) Precision change test
+%% 5) Edge perturbation random sample containment
+rng(42);
+E_lb5 = E - 0.05;
+E_ub5 = E + 0.05;
+E_star5 = ImageStar(E_lb5, E_ub5);
+
+GS_out5 = L.reach(GS_in, E_star5, adj_list, 'approx-star');
+[lb_out5, ub_out5] = GS_out5.getRanges();
+tol5 = 1e-6;
+
+num_samples = 50;
+all_in_bounds = true;
+for s = 1:num_samples
+    % Random node input within GraphStar bounds
+    alpha_n = rand(GS_in.numPred, 1) .* (GS_in.pred_ub - GS_in.pred_lb) + GS_in.pred_lb;
+    X_s = GS_in.V(:, :, 1);
+    for k = 1:GS_in.numPred
+        X_s = X_s + alpha_n(k) * GS_in.V(:, :, k+1);
+    end
+    % Random edge input within perturbation bounds
+    E_s = E_lb5 + rand(size(E)) .* (E_ub5 - E_lb5);
+    % Evaluate and check containment
+    Y_s = L.evaluate(X_s, E_s, adj_list);
+    if ~(all(Y_s(:) >= lb_out5(:) - tol5) && all(Y_s(:) <= ub_out5(:) + tol5))
+        all_in_bounds = false;
+        fprintf('Sample %d FAILED containment check\n', s);
+        break;
+    end
+end
+assert(all_in_bounds, 'All random samples should be within output bounds (edge perturbation)');
+
+%% 6) Precision change test
 L_prec = GINELayer('prec_test', W_node, b_node, W_edge, b_edge);
 L_prec.changeParamsPrecision('single');
 assert(isa(L_prec.Weights, 'single'), 'Node weights should be single precision');

@@ -570,28 +570,38 @@ classdef GINELayer < handle
             end
 
             % (4) Combine node and edge features via Minkowski sum
-            % Need to pad both to same number of generators
-            [V_node_padded, C_node_padded, d_node, pred_lb_node, pred_ub_node, ...
-             V_edge_padded, C_edge_padded, d_edge, pred_lb_edge, pred_ub_edge] = ...
-                obj.pad_to_same_K(V_node_edge, in_gs.C, in_gs.d, in_gs.pred_lb, in_gs.pred_ub, ...
-                                  E_trans_V, E_C, E_d, E_pred_lb, E_pred_ub);
+            % Direct combination without padding — avoids inflating
+            % generator count from 2*K_pad-1 to K_node+K_edge-1
+            C_node = in_gs.C; d_node = in_gs.d;
+            lb_node = in_gs.pred_lb; ub_node = in_gs.pred_ub;
+            C_edge = E_C; d_edge = E_d;
+            lb_edge = E_pred_lb; ub_edge = E_pred_ub;
+
+            K_node = size(V_node_edge, 3);
+            K_edge = size(E_trans_V, 3);
+
+            % Normalize empty constraints for blkdiag
+            if isempty(C_node), C_node = zeros(0, max(K_node-1, 0)); end
+            if isempty(C_edge), C_edge = zeros(0, max(K_edge-1, 0)); end
+            if isempty(d_node), d_node = zeros(0, 1); end
+            if isempty(d_edge), d_edge = zeros(0, 1); end
+            if isempty(lb_node), lb_node = -ones(max(K_node-1, 0), 1); end
+            if isempty(ub_node), ub_node = ones(max(K_node-1, 0), 1); end
+            if isempty(lb_edge), lb_edge = -ones(max(K_edge-1, 0), 1); end
+            if isempty(ub_edge), ub_edge = ones(max(K_edge-1, 0), 1); end
 
             % Minkowski sum: add centers, concatenate generators
-            K_node = size(V_node_padded, 3);
-            K_edge = size(V_edge_padded, 3);
-
-            % Combined V: center is sum of centers, generators are concatenated
-            F_msg = size(V_node_padded, 2);
-            V_combined = zeros(numEdges, F_msg, K_node + K_edge - 1, 'like', V_node_padded);
-            V_combined(:, :, 1) = V_node_padded(:, :, 1) + V_edge_padded(:, :, 1);  % centers
-            V_combined(:, :, 2:K_node) = V_node_padded(:, :, 2:end);  % node generators
-            V_combined(:, :, K_node+1:end) = V_edge_padded(:, :, 2:end);  % edge generators
+            F_msg = size(V_node_edge, 2);
+            V_combined = zeros(numEdges, F_msg, K_node + K_edge - 1, 'like', V_node_edge);
+            V_combined(:, :, 1) = V_node_edge(:, :, 1) + E_trans_V(:, :, 1);  % centers
+            V_combined(:, :, 2:K_node) = V_node_edge(:, :, 2:end);  % node generators
+            V_combined(:, :, K_node+1:end) = E_trans_V(:, :, 2:end);  % edge generators
 
             % Combined constraints: block diagonal
-            C_combined = blkdiag(C_node_padded, C_edge_padded);
+            C_combined = blkdiag(C_node, C_edge);
             d_combined = [d_node; d_edge];
-            pred_lb_combined = [pred_lb_node; pred_lb_edge];
-            pred_ub_combined = [pred_ub_node; pred_ub_edge];
+            pred_lb_combined = [lb_node; lb_edge];
+            pred_ub_combined = [ub_node; ub_edge];
 
             % (5) Apply ReLU using NNV's standard ReluLayer (sound implementation)
             % Convert V [m x F x K] to Star V [m*F x K]

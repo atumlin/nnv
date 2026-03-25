@@ -19,8 +19,10 @@ function [gnn, test_data, norm_stats] = gnn2nnv(mat_path)
 %
 % Supported model types (auto-detected from .mat fields):
 %   'gcn'        - GCN layers (uses ANorm_g adjacency)
+%   'sage'       - SAGEConv layers (uses A_adj binary adjacency)
 %   'gine_linear'- Simplified GINE with linear projections (GINELayer)
 %   'gine_conv'  - Full GINE with MLPs (GINEConvLayer)
+%   'gine_pretrain' - GIN+E from Hu et al. ICLR 2020 (HuGINEConvLayer)
 %
 % Author: Anne Tumlin
 % Date: 02/11/2026
@@ -44,10 +46,14 @@ function [gnn, test_data, norm_stats] = gnn2nnv(mat_path)
     switch model_type
         case 'gcn'
             gnn = build_gcn(model);
+        case 'sage'
+            gnn = build_sage(model);
         case 'gine_linear'
             gnn = build_gine_linear(model);
         case 'gine_conv'
             gnn = build_gine_conv(model);
+        case 'gine_pretrain'
+            gnn = build_gine_pretrain(model);
         otherwise
             error('gnn2nnv:unknownType', 'Unknown model type: %s', model_type);
     end
@@ -87,7 +93,13 @@ function model_type = detect_model_type(model)
         error('gnn2nnv:noParams', 'No best_params found in .mat file.');
     end
 
-    % Check for full GINE (has conv.mlp fields)
+    % Check for Hu et al. GIN+E (has conv.edge_proj, not edge_linear)
+    if has_conv_edge_proj_fields(params)
+        model_type = 'gine_pretrain';
+        return;
+    end
+
+    % Check for full GINE (has conv.mlp fields with edge_linear)
     if has_conv_mlp_fields(params)
         model_type = 'gine_conv';
         return;
@@ -96,6 +108,12 @@ function model_type = detect_model_type(model)
     % Check for simplified GINE (has edge fields but no MLP)
     if has_edge_fields(params)
         model_type = 'gine_linear';
+        return;
+    end
+
+    % Check for SAGEConv (has sage{i} fields with NodeWeights)
+    if has_sage_fields(params)
+        model_type = 'sage';
         return;
     end
 
@@ -120,8 +138,18 @@ function tf = has_edge_fields(params)
 end
 
 
+function tf = has_conv_edge_proj_fields(params)
+    tf = isfield(params, 'conv1') && isfield(params.conv1, 'edge_proj');
+end
+
+
 function tf = has_conv_mlp_fields(params)
     tf = isfield(params, 'conv1') && isfield(params.conv1, 'mlp1');
+end
+
+
+function tf = has_sage_fields(params)
+    tf = isfield(params, 'sage1') && isfield(params.sage1, 'NodeWeights');
 end
 
 
@@ -169,6 +197,56 @@ function gnn = build_gcn(model)
     end
 
     gnn = GNN(layers, A_norm);
+end
+
+
+%% ======== SAGEConv Builder ========
+
+function gnn = build_sage(model)
+% Build GNN with SAGEConv layers from .mat file
+%
+% Expected fields:
+%   model.best_params.sage{i}.NodeWeights  (F_in x F_out)
+%   model.best_params.sage{i}.EdgeWeights  (F_in x F_out)
+%   model.best_params.sage{i}.Bias         (F_out x 1)
+%   model.A_adj                            (N x N binary adjacency)
+
+    params = model.best_params;
+    A_adj = double(model.A_adj);
+
+    % Count layers
+    num_layers = count_indexed_fields(params, 'sage');
+    fprintf('gnn2nnv: Building SAGEConv with %d conv layers\n', num_layers);
+
+    % Determine if ReLU activations are interleaved
+    has_relu = true;
+    if isfield(model, 'activations')
+        has_relu = ~strcmp(model.activations, 'none');
+    end
+
+    layers = {};
+    for i = 1:num_layers
+        field = sprintf('sage%d', i);
+        W_node = double(gather_if_gpu(params.(field).NodeWeights));
+        W_edge = double(gather_if_gpu(params.(field).EdgeWeights));
+        if isfield(params.(field), 'Bias') && ~isempty(params.(field).Bias)
+            b = double(gather_if_gpu(params.(field).Bias));
+        else
+            b = zeros(size(W_node, 2), 1);
+        end
+
+        name = sprintf('sage%d', i);
+        layers{end+1} = SAGEConvLayer(name, W_node, W_edge, b); %#ok<AGROW>
+        fprintf('  Layer %d: SAGEConvLayer %d -> %d\n', i, size(W_node, 1), size(W_node, 2));
+
+        % Add ReLU after each conv layer
+        if has_relu
+            layers{end+1} = ReluLayer(); %#ok<AGROW>
+        end
+    end
+
+    % A_adj stored in GNN's A_norm field (GNN.m passes it to SAGEConvLayer)
+    gnn = GNN(layers, A_adj);
 end
 
 
@@ -304,6 +382,71 @@ function gnn = build_gine_conv(model)
 end
 
 
+%% ======== Hu et al. GIN+E (HuGINEConvLayer) Builder ========
+
+function gnn = build_gine_pretrain(model)
+% Build GNN with HuGINEConvLayer (Hu et al. ICLR 2020)
+%
+% Expected fields:
+%   model.best_params.conv{i}.mlp1.Weights       (F_in x hidden)
+%   model.best_params.conv{i}.mlp1.Bias           (hidden x 1)
+%   model.best_params.conv{i}.mlp2.Weights        (hidden x F_out)
+%   model.best_params.conv{i}.mlp2.Bias           (F_out x 1)
+%   model.best_params.conv{i}.edge_proj.Weights   (E_in x F_in)
+%   model.best_params.conv{i}.edge_proj.Bias      (F_in x 1)
+%   model.src, model.dst, model.E_edge
+%
+% Self-loops should already be included in the edge list (added by
+% the Python exporter). Edge features for self-loops are zeros.
+
+    params = model.best_params;
+
+    % Extract graph structure
+    src = double(model.src);
+    dst = double(model.dst);
+    adj_list = [src, dst];
+    E = double(model.E_edge);
+    edge_weights = [];
+    if isfield(model, 'a')
+        edge_weights = double(model.a);
+    end
+
+    % Count layers
+    num_layers = count_indexed_fields(params, 'conv');
+    fprintf('gnn2nnv: Building Hu et al. GIN+E with %d conv layers\n', num_layers);
+
+    layers = {};
+    for i = 1:num_layers
+        conv_field = sprintf('conv%d', i);
+        conv = params.(conv_field);
+
+        % MLP layer 1
+        W1 = double(gather_if_gpu(conv.mlp1.Weights));
+        b1 = get_bias(conv.mlp1, size(W1, 2));
+
+        % MLP layer 2
+        W2 = double(gather_if_gpu(conv.mlp2.Weights));
+        b2 = get_bias(conv.mlp2, size(W2, 2));
+
+        % Edge projection
+        W_edge = double(gather_if_gpu(conv.edge_proj.Weights));
+        b_edge = get_bias(conv.edge_proj, size(W_edge, 2));
+
+        name = sprintf('hu_gine%d', i);
+        layers{end+1} = HuGINEConvLayer(name, W1, b1, W2, b2, W_edge, b_edge); %#ok<AGROW>
+        fprintf('  Layer %d: HuGINEConvLayer F_in=%d, hidden=%d, F_out=%d, E_in=%d\n', ...
+            i, size(W1, 1), size(W1, 2), size(W2, 2), size(W_edge, 1));
+
+        % Add inter-layer ReLU (outer ReLU for intermediate layers)
+        if i < num_layers
+            layers{end+1} = ReluLayer(); %#ok<AGROW>
+        end
+    end
+
+    gnn = GNN(layers, [], adj_list, E, edge_weights);
+end
+
+
 %% ======== Validation ========
 
 function validate_predictions(gnn, model, model_type)
@@ -347,15 +490,29 @@ end
 
 function test_data = extract_test_data(model, model_type)
 % Extract test data from .mat file
+% Supports multi-graph exports: X_all{i}, Y_all{i} for all graphs
+% test_data.X and test_data.Y are graph 1 (backward compatible)
 
     test_data = struct();
 
     % Node features
     if isfield(model, 'X_test_g')
         if iscell(model.X_test_g)
+            test_data.num_graphs = numel(model.X_test_g);
             test_data.X = double(model.X_test_g{1});
+            % Store all graphs for multi-graph verification
+            if test_data.num_graphs > 1
+                test_data.X_all = cell(test_data.num_graphs, 1);
+                for i = 1:test_data.num_graphs
+                    test_data.X_all{i} = double(model.X_test_g{i});
+                end
+            else
+                test_data.X_all = {test_data.X};
+            end
         else
+            test_data.num_graphs = 1;
             test_data.X = double(model.X_test_g);
+            test_data.X_all = {test_data.X};
         end
     end
 
@@ -363,13 +520,22 @@ function test_data = extract_test_data(model, model_type)
     if isfield(model, 'Y_test_g')
         if iscell(model.Y_test_g)
             test_data.Y = double(model.Y_test_g{1});
+            if numel(model.Y_test_g) > 1
+                test_data.Y_all = cell(numel(model.Y_test_g), 1);
+                for i = 1:numel(model.Y_test_g)
+                    test_data.Y_all{i} = double(model.Y_test_g{i});
+                end
+            else
+                test_data.Y_all = {test_data.Y};
+            end
         else
             test_data.Y = double(model.Y_test_g);
+            test_data.Y_all = {test_data.Y};
         end
     end
 
     % Edge features and graph structure (for GINE models)
-    if strcmp(model_type, 'gine_linear') || strcmp(model_type, 'gine_conv')
+    if strcmp(model_type, 'gine_linear') || strcmp(model_type, 'gine_conv') || strcmp(model_type, 'gine_pretrain')
         if isfield(model, 'E_edge')
             test_data.E = double(model.E_edge);
         end
@@ -381,6 +547,11 @@ function test_data = extract_test_data(model, model_type)
     % Adjacency (for GCN)
     if strcmp(model_type, 'gcn') && isfield(model, 'ANorm_g')
         test_data.A_norm = double(model.ANorm_g);
+    end
+
+    % Adjacency (for SAGEConv)
+    if strcmp(model_type, 'sage') && isfield(model, 'A_adj')
+        test_data.A_adj = double(model.A_adj);
     end
 end
 
