@@ -131,7 +131,7 @@ for k = 1:length(onnxFiles)
     rand_indices = randsample(total_obs, numObs);
 
     for e=1:length(epsilon)
-        clear R outputSet IS temp t
+        clear R outputSet IS temp tStart
         % Reset the timeout flag
         assignin('base', 'timeoutOccurred', false);
 
@@ -147,7 +147,14 @@ for k = 1:length(onnxFiles)
             idx = rand_indices(i);
             IS = perturbationIF(X_test_loaded(:, idx), epsilon(e), min_values, max_values);
 
-            t = tic;  % Start timing the verification for each sample
+            % Use posixtime instead of tic/toc for the per-sample timer.
+            % We have observed (#9 in repeatability notes) that the inner
+            % uint64 timer reference returned by `tic` can interact badly
+            % with the verificationTimer's TimerFcn callback running on the
+            % same MATLAB thread, occasionally producing huge bogus
+            % elapsed values like 184467440737s (~ 2^64 / 1e8) inside
+            % AC-3's individual-fairness sweep. posixtime is unaffected.
+            tStart = posixtime(datetime('now'));
             outputSet = net.reach(IS,reachOptions); % Generate output set
             target = y_test_loaded(idx);
 
@@ -179,7 +186,7 @@ for k = 1:length(onnxFiles)
 
             res(i,e) = temp; % robust result
 
-            time(i,e) = toc(t); % store computation time
+            time(i,e) = posixtime(datetime('now')) - tStart; % store computation time
 
             % Check for timeout flag
             if evalin('base', 'timeoutOccurred')

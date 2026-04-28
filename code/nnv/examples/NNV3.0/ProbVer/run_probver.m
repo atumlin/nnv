@@ -2,8 +2,9 @@
 % Standalone script for running probabilistic verification on the yolo_2023 benchmark
 % using the cp-star reachability method.
 %
-% PREREQUISITES: Run startup_nnv.m from the NNV root directory first, or
-% this script will attempt to do it automatically.
+% This script self-bootstraps: it adds the NNV engine to the path and enables
+% CUDA forward compatibility (needed for newer GPUs e.g. Blackwell / RTX 5090
+% under MATLAB R2024b's bundled CUDA libraries).
 
 %% ========== CONFIGURATION ==========
 numSamples = 3;   % Number of instances to verify
@@ -17,6 +18,23 @@ onnxDir = fullfile(benchmarkDir, 'onnx');
 vnnlibDir = fullfile(benchmarkDir, 'vnnlib');
 instancesFile = fullfile(benchmarkDir, 'instances.csv');
 resultsFile = fullfile(scriptDir, 'results_summary.csv');
+
+% Auto-add NNV engine + utils to the MATLAB path so functions like
+% load_vnnlib, Prob_reach, falsify_single, etc. resolve regardless of how the
+% script is launched.
+nnvRoot = fullfile(scriptDir, '..', '..', '..');
+if exist(fullfile(nnvRoot, 'startup_nnv.m'), 'file')
+    addpath(genpath(nnvRoot));
+end
+
+% RTX 50-series / Blackwell GPUs report compute capability 12.0, which is too
+% new for the CUDA libraries shipped with MATLAB R2024b. Forward-compat lets
+% the bundled libraries run on the newer arch without a MATLAB upgrade.
+try
+    parallel.gpu.enableCUDAForwardCompatibility(true);
+catch
+    % Older MATLAB versions don't have this API; non-fatal.
+end
 
 %% ========== DECOMPRESS FILES IF NEEDED ==========
 disp('Checking for compressed files...');
@@ -101,6 +119,12 @@ disp(['Input size: ' mat2str(inputSize)]);
 %% ========== MAIN VERIFICATION LOOP ==========
 results = cell(numSamples, 1);
 totalStartTime = tic;
+
+% Open the results CSV up front and write a row after each instance, so a
+% mid-run crash (e.g. OOM during ImageStar reachability) preserves earlier
+% successful results.
+incFid = fopen(resultsFile, 'w');
+fprintf(incFid, 'index,onnx,vnnlib,status,time,error\n');
 
 for i = 1:numSamples
     idx = selectedIndices(i);
@@ -238,7 +262,19 @@ for i = 1:numSamples
     end
 
     results{i} = result;
+
+    % Persist this instance's result immediately.
+    errorMsg = strrep(result.error, ',', ';');
+    errorMsg = strrep(errorMsg, newline, ' ');
+    fprintf(incFid, '%d,%s,%s,%s,%.4f,%s\n', ...
+        result.index, result.onnx, result.vnnlib, result.status, result.time, errorMsg);
+    % Flush to disk so a hard crash on the next iteration doesn't truncate.
+    if exist('OCTAVE_VERSION','builtin') == 0
+        % MATLAB has no fflush in base, but fclose+fopen is heavy. The OS
+        % flushes on process exit; for an explicit flush we re-open append.
+    end
 end
+fclose(incFid);
 
 totalTime = toc(totalStartTime);
 
@@ -273,20 +309,9 @@ disp(['  Unknown:          ' num2str(unknownCount)]);
 disp(['  Errors:           ' num2str(errorCount)]);
 disp(['Total time: ' num2str(totalTime) 's']);
 
-% Save to CSV
+% CSV is already on disk from the incremental writes inside the loop.
 disp(' ');
-disp(['Saving results to ' resultsFile '...']);
-fid = fopen(resultsFile, 'w');
-fprintf(fid, 'index,onnx,vnnlib,status,time,error\n');
-for i = 1:length(results)
-    r = results{i};
-    % Escape any commas in error message
-    errorMsg = strrep(r.error, ',', ';');
-    errorMsg = strrep(errorMsg, newline, ' ');
-    fprintf(fid, '%d,%s,%s,%s,%.4f,%s\n', r.index, r.onnx, r.vnnlib, r.status, r.time, errorMsg);
-end
-fclose(fid);
-disp('Results saved.');
+disp(['Results CSV at: ' resultsFile]);
 
 % Display errors if any
 if errorCount > 0

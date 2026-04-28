@@ -23,6 +23,21 @@ function results = run_gnn_experiments(varargin)
 % Author: Anne Tumlin
 % Date: 01/15/2026
 
+%% Bootstrap NNV path + GPU forward compatibility
+% Auto-add NNV engine to path so functions resolve regardless of caller cwd.
+scriptDirGNNV = fileparts(mfilename('fullpath'));
+nnvRootGNNV = fullfile(scriptDirGNNV, '..', '..', '..');
+if exist(fullfile(nnvRootGNNV, 'startup_nnv.m'), 'file')
+    addpath(genpath(nnvRootGNNV));
+end
+
+% RTX 50-series / Blackwell GPUs (CC 12.0) are too new for MATLAB R2024b's
+% bundled CUDA libs without forward-compat enabled. Non-fatal on older MATLAB.
+try
+    parallel.gpu.enableCUDAForwardCompatibility(true);
+catch
+end
+
 %% Parse arguments
 generate_figures = true;
 verbose = true;
@@ -121,7 +136,11 @@ for s = 1:num_scenarios
                     fprintf('[%d/%d] %s, eps=%.3f: ', exp_count, total_experiments, model_name, epsilon);
                 end
             end
-            exp_start = tic;
+            % Use posixtime instead of tic/toc here. With many GPU
+            % allocations per iteration we have observed the inner uint64
+            % `tic` reference occasionally returning bogus huge values
+            % (~1.84e13s, i.e. (2^64-1)/1e6) on Blackwell/RTX 5090 hosts.
+            exp_start = posixtime(datetime('now'));
 
             % Run experiment based on model type
             switch model_name
@@ -133,7 +152,7 @@ for s = 1:num_scenarios
                     exp_result = run_gine_edge_experiment(gine_model, epsilon, perturb_features, v_min, v_max, scenario_idx);
             end
 
-            exp_result.time = toc(exp_start);
+            exp_result.time = posixtime(datetime('now')) - exp_start;
             exp_result.scenario_idx = scenario_idx;
             results.data{m, e, s} = exp_result;
 
