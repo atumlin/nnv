@@ -32,9 +32,11 @@ echo "experiment,status,wall_seconds,log" > "$SUMMARY_CSV"
 MATLAB_PRELUDE="addpath(genpath('${NNV_ROOT}')); try, parallel.gpu.enableCUDAForwardCompatibility(true); catch; end;"
 
 run_one() {
+    # Args: name, subdir, kind ("matlab"|"shell"), entry
     local name="$1"
     local subdir="$2"
-    local script="$3"
+    local kind="$3"
+    local entry="$4"
 
     if [[ " $SKIP " == *" $name "* ]]; then
         printf '\n=== %-12s SKIPPED (NNV3_SKIP) ===\n' "$name"
@@ -46,10 +48,17 @@ run_one() {
     printf '\n=== %-12s start: %s ===\n' "$name" "$(date -u +%FT%TZ)"
     local t0
     t0=$(date -u +%s)
-    (
-        cd "${SCRIPT_DIR}/${subdir}" || exit 99
-        "$MATLAB" -nodisplay -batch "${MATLAB_PRELUDE} run('${script}'); exit()"
-    ) 2>&1 | tee "$logfile"
+    if [[ "$kind" == "matlab" ]]; then
+        (
+            cd "${SCRIPT_DIR}/${subdir}" || exit 99
+            "$MATLAB" -nodisplay -batch "${MATLAB_PRELUDE} run('${entry}'); exit()"
+        ) 2>&1 | tee "$logfile"
+    else
+        (
+            cd "${SCRIPT_DIR}/${subdir}" || exit 99
+            bash "${SCRIPT_DIR}/${subdir}/${entry}"
+        ) 2>&1 | tee "$logfile"
+    fi
     local rc=${PIPESTATUS[0]}
     local t1
     t1=$(date -u +%s)
@@ -65,10 +74,13 @@ run_one() {
 }
 
 overall=0
-run_one fairnnv  FairNNV  run_fm26_fairnnv.m   || overall=$?
-run_one probver  ProbVer  run_probver.m        || overall=$?
-run_one gnnv     GNNV     run_gnn_experiments.m || overall=$?
-run_one videostar VideoStar run_zoomin_4f.m    || overall=$?
+run_one fairnnv   FairNNV   matlab run_fm26_fairnnv.m    || overall=$?
+# ProbVer uses a bash driver that runs each instance in its own MATLAB
+# process — see ProbVer/run_probver.sh — so an OOM in one instance doesn't
+# kill the whole verification run.
+run_one probver   ProbVer   shell  run_probver.sh        || overall=$?
+run_one gnnv      GNNV      matlab run_gnn_experiments.m || overall=$?
+run_one videostar VideoStar matlab run_zoomin_4f.m       || overall=$?
 
 echo
 echo "=========================== SUMMARY ============================"

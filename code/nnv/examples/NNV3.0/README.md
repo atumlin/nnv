@@ -97,14 +97,25 @@ Outputs (in `FairNNV/fm26_fairnnv_results/`):
 
 ```bash
 cd ProbVer
-matlab -nodisplay -r "run('run_probver.m'); exit()"
+bash run_probver.sh
 ```
 
-The script verifies a random subset (default `numSamples = 3`) of the
-TinyYOLO `yolo_2023` benchmark using the cp-star reachability method.
-Results are written to `results_summary.csv` *incrementally* — one row
-per instance, flushed before the next iteration begins, so a crash in
-instance N preserves results for instances 1..N-1.
+The bash driver verifies a random subset (default `PROBVER_NUM_SAMPLES = 3`)
+of the TinyYOLO `yolo_2023` benchmark using the cp-star reachability method.
+**Each instance runs in its own MATLAB process**, so if `Prob_reach` overflows
+host memory and the kernel SIGKILLs MATLAB on one instance (e.g. the
+`TinyYOLO_prop_000277_eps_1_255` ImageStar that warns `"large for memory"`),
+the next instance starts in a fresh address space and the run continues. The
+crashed instance is recorded in `results_summary.csv` with status `oom`.
+
+Tunables (env vars):
+- `PROBVER_NUM_SAMPLES` — number of instances (default 3)
+- `PROBVER_SEED` — instance-selection seed (default 42)
+- `PROBVER_NRAND` — falsification samples (default 100)
+
+The single-MATLAB legacy path (`matlab -nodisplay -r "run('run_probver.m');
+exit()"`) still works and is useful for debugging a single instance, but it
+shares MATLAB state across instances and is more vulnerable to mid-run OOMs.
 
 #### GNNV (uses GPU, ~5 min)
 
@@ -155,13 +166,13 @@ RTX 5090 (32 GB VRAM, Blackwell, CC 12.0), driver 581.95, CUDA 13. MATLAB R2024b
 runs inside the container; the same host has MATLAB R2025b natively but it
 isn't used for these numbers.
 
-| Experiment            | Wall-clock | Notes                                                          |
-|-----------------------|-----------:|----------------------------------------------------------------|
-| FairNNV               |     118 s  | 100 samples × 7 ε × 2 ONNX models. CPU only.                   |
-| ProbVer (3 instances) |     ~7 min | TinyYOLO + cp-star reach. GPU. See `results_summary.csv`.      |
-| GNNV (90 verifs)      |     239 s  | 10 scenarios × 3 models × 3 ε. GPU. README baseline was ~5 min.|
-| VideoStar ZoomIn-4f   |   ~12.6 min| 10 samples × 3 ε with `relax` algorithm. GPU.                  |
-| **End-to-end suite**  | **~22 min**| All four via `run_all.sh`, RTX 5090.                           |
+| Experiment            | Wall-clock | Notes                                                                                                |
+|-----------------------|-----------:|------------------------------------------------------------------------------------------------------|
+| FairNNV               |     121 s  | 100 samples × 7 ε × 2 ONNX models. CPU only.                                                         |
+| ProbVer (3 instances) |     519 s  | TinyYOLO + cp-star reach (per-instance MATLAB process). All 3 instances `unsat` (145.1, 148.1, 144.6 s). GPU. |
+| GNNV (90 verifs)      |     246 s  | 10 scenarios × 3 models × 3 ε. GPU.                                                                  |
+| VideoStar ZoomIn-4f   |     754 s  | 10 samples × 3 ε with `relax` algorithm. GPU. 7 verified / 0 violated / 3 unknown per ε.             |
+| **End-to-end suite**  | **~27 min**| All four via `run_all.sh`, RTX 5090.                                                                 |
 
 These numbers are intended as a baseline. Expect roughly 1.5–3× longer on a
 mid-range workstation GPU (RTX 4070 / A4000) and 5–10× longer on CPU-only hosts.
