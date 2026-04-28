@@ -78,6 +78,24 @@ session. Per-experiment logs land in `repeatability_logs/`, and a final
 
 Skip individual experiments with `NNV3_SKIP="probver videostar" bash run_all.sh`.
 
+**GPU autodetection.** `run_all.sh` checks for an NVIDIA GPU via `nvidia-smi -L`
+at startup and adapts:
+
+- **GPU present** — runs the full suite (the README's reference timings).
+- **No GPU** — prints a "deferring to CPU" notice and:
+  - Skips **ProbVer** (cp-star reachability trains a surrogate network on
+    CUDA via the Python venv; there is no CPU fallback for it). It appears
+    in `summary.csv` as `skipped,0,no GPU (CPU fallback unsupported for
+    cp-star)`.
+  - Runs **FairNNV** (CPU-only by design — no change).
+  - Runs **GNNV** and **VideoStar** as CPU best-effort. NNV's reachability
+    is mostly CPU-side, but expect substantially longer wall-clock than
+    the GPU baselines below.
+
+Override the autodetection with `NNV3_FORCE_GPU=0` (force-skip ProbVer even
+on a GPU host) or `NNV3_FORCE_GPU=1` (assume a GPU exists and try ProbVer
+anyway).
+
 ### Individual experiments
 
 #### FairNNV

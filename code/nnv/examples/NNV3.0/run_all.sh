@@ -27,8 +27,47 @@ mkdir -p "$LOG_DIR"
 SUMMARY_CSV="${LOG_DIR}/summary.csv"
 echo "experiment,status,wall_seconds,log" > "$SUMMARY_CSV"
 
+# ---------------------------------------------------------------------------
+# GPU autodetection. ProbVer's cp-star reachability trains a surrogate
+# network on CUDA via the Python venv; without a GPU it cannot run, so we
+# auto-skip it. FairNNV is CPU-only; GNNV and VideoStar use MATLAB's
+# reachability which is largely CPU but with some GPU-accelerated paths —
+# they will run on a CPU host but expect significant slowdowns.
+# Override the autodetection with NNV3_FORCE_GPU={0,1}.
+# ---------------------------------------------------------------------------
+detect_gpu() {
+    if [[ -n "${NNV3_FORCE_GPU:-}" ]]; then
+        [[ "${NNV3_FORCE_GPU}" == "1" ]]
+        return $?
+    fi
+    if command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi -L >/dev/null 2>&1 \
+       && nvidia-smi -L | grep -q '^GPU '; then
+        return 0
+    fi
+    return 1
+}
+
+if detect_gpu; then
+    HAS_GPU=1
+    echo "[run_all] GPU detected:"
+    nvidia-smi -L 2>/dev/null | sed 's/^/[run_all]   /'
+else
+    HAS_GPU=0
+    echo "[run_all] No NVIDIA GPU detected — deferring to CPU."
+    echo "[run_all]   ProbVer will be SKIPPED (cp-star reachability requires CUDA)."
+    echo "[run_all]   FairNNV is CPU-only, no change."
+    echo "[run_all]   GNNV / VideoStar will attempt CPU-only execution;"
+    echo "[run_all]   expect significant slowdown vs the GPU baselines in the README."
+    # Mark probver as skipped via the same SKIP mechanism users have.
+    if [[ " $SKIP " != *" probver "* ]]; then
+        SKIP="${SKIP} probver"
+    fi
+fi
+export NNV3_HAS_GPU="$HAS_GPU"
+
 # Forward-compat call is repeated in each script too; we set it here as well
-# so MATLAB doesn't error on Blackwell/RTX 5090 hosts before the script runs.
+# so MATLAB doesn't error on Blackwell / RTX 5090 hosts. The call is wrapped
+# in try/catch and is a no-op on hosts without an NVIDIA GPU.
 MATLAB_PRELUDE="addpath(genpath('${NNV_ROOT}')); try, parallel.gpu.enableCUDAForwardCompatibility(true); catch; end;"
 
 run_one() {
@@ -39,8 +78,12 @@ run_one() {
     local entry="$4"
 
     if [[ " $SKIP " == *" $name "* ]]; then
-        printf '\n=== %-12s SKIPPED (NNV3_SKIP) ===\n' "$name"
-        echo "${name},skipped,0," >> "$SUMMARY_CSV"
+        local reason="NNV3_SKIP"
+        if [[ "$HAS_GPU" -eq 0 && "$name" == "probver" ]]; then
+            reason="no GPU (CPU fallback unsupported for cp-star)"
+        fi
+        printf '\n=== %-12s SKIPPED (%s) ===\n' "$name" "$reason"
+        echo "${name},skipped,0,${reason}" >> "$SUMMARY_CSV"
         return 0
     fi
 
